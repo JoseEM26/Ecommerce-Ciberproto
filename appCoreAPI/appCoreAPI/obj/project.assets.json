@@ -4452,24 +4452,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\sntg_\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\JOSE ANGEL\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\sntg_\\OneDrive\\Escritorio\\C#\\appCoreAPI\\appCoreAPI\\appCoreAPI.csproj",
+      "projectUniqueName": "C:\\GITHUB\\EccomerceCiberPRoto\\appCoreAPI\\appCoreAPI\\appCoreAPI.csproj",
       "projectName": "appCoreAPI",
-      "projectPath": "C:\\Users\\sntg_\\OneDrive\\Escritorio\\C#\\appCoreAPI\\appCoreAPI\\appCoreAPI.csproj",
-      "packagesPath": "C:\\Users\\sntg_\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\sntg_\\OneDrive\\Escritorio\\C#\\appCoreAPI\\appCoreAPI\\obj\\",
+      "projectPath": "C:\\GITHUB\\EccomerceCiberPRoto\\appCoreAPI\\appCoreAPI\\appCoreAPI.csproj",
+      "packagesPath": "C:\\Users\\JOSE ANGEL\\.nuget\\packages\\",
+      "outputPath": "C:\\GITHUB\\EccomerceCiberPRoto\\appCoreAPI\\appCoreAPI\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\sntg_\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\JOSE ANGEL\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4495,8 +4490,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "9.0.300"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -4540,7 +4534,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.300/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
