@@ -1,0 +1,125 @@
+﻿
+
+SET NOCOUNT ON
+GO
+
+PRINT 'Iniciando creación de CiberProtoDatabase 2025 - Versión Todo-en-Uno...'
+GO
+
+-- =============================================
+-- 0. ELIMINAR Y CREAR BASE DE DATOS LIMPIA
+-- =============================================
+USE master
+GO
+
+IF DB_ID('CiberProtoDatabase') IS NOT NULL
+BEGIN
+    ALTER DATABASE CiberProtoDatabase SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+    DROP DATABASE CiberProtoDatabase
+    PRINT 'Base de datos anterior eliminada.'
+END
+GO
+
+CREATE DATABASE CiberProtoDatabase
+GO
+
+USE CiberProtoDatabase
+GO
+
+PRINT 'Base de datos CiberProtoDatabase creada.'
+GO
+
+-- =============================================
+-- 1. TABLAS
+-- =============================================
+
+CREATE TABLE tb_categoria (
+    IdCategoria INT PRIMARY KEY IDENTITY(1,1),
+ Descripcion VARCHAR(255) NOT NULL,
+ Activo BIT DEFAULT 1
+);
+
+CREATE TABLE tb_marca (
+ IdMarca INT PRIMARY KEY IDENTITY(1,1),
+ Descripcion VARCHAR(255) NOT NULL,
+ Activo BIT DEFAULT 1
+);
+
+CREATE TABLE tb_producto (
+ IdProducto INT PRIMARY KEY IDENTITY(1,1),
+ Nombre VARCHAR(255) NOT NULL,
+ Descripcion VARCHAR(500),
+ IdMarca INT NOT NULL REFERENCES tb_marca(IdMarca),
+ IdCategoria INT NOT NULL REFERENCES tb_categoria(IdCategoria),
+ Precio DECIMAL(10,2) NOT NULL DEFAULT 0,
+ Stock INT NOT NULL DEFAULT 0,
+ UrlImagen VARCHAR(MAX),
+ Activo BIT DEFAULT 1
+);
+
+CREATE TABLE tb_usuario (
+ IdUsuario INT PRIMARY KEY IDENTITY(1,1),
+ Nombres VARCHAR(255) NOT NULL,
+ Apellidos VARCHAR(255) NOT NULL,
+ Correo VARCHAR(255) NOT NULL UNIQUE,
+ Clave VARBINARY(64) NOT NULL,        -- Hash SHA2_256
+ Telefono VARCHAR(20),
+ Rol VARCHAR(20) DEFAULT 'CLIENTE' CHECK (Rol IN ('ADMIN','CLIENTE')),
+ Activo BIT DEFAULT 1,
+ Reestablecer BIT DEFAULT 0,
+ FechaRegistro DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE tb_carrito (
+ IdCarrito INT PRIMARY KEY IDENTITY(1,1),
+ IdUsuario INT NOT NULL REFERENCES tb_usuario(IdUsuario),
+ IdProducto INT NOT NULL REFERENCES tb_producto(IdProducto),
+ Cantidad INT NOT NULL CHECK (Cantidad > 0),
+ UNIQUE(IdUsuario, IdProducto)
+);
+
+CREATE TABLE tb_tarjeta_pago (
+ IdTarjeta INT PRIMARY KEY IDENTITY(1,1),
+ IdUsuario INT NOT NULL REFERENCES tb_usuario(IdUsuario),
+ NumeroTarjeta VARCHAR(19) NOT NULL,
+ Titular VARCHAR(255) NOT NULL,
+ FechaExpiracion VARCHAR(5) NOT NULL, -- MM/AA
+ CVV VARCHAR(4) NOT NULL,
+ Tipo VARCHAR(20) DEFAULT 'VISA' CHECK (Tipo IN ('VISA','MASTERCARD','AMEX')),
+ Predeterminada BIT DEFAULT 0,
+ Activo BIT DEFAULT 1
+);
+
+CREATE TABLE tb_venta (
+ IdVenta INT PRIMARY KEY IDENTITY(1,1),
+ IdUsuario INT NOT NULL REFERENCES tb_usuario(IdUsuario),
+ IdTarjeta INT NULL REFERENCES tb_tarjeta_pago(IdTarjeta),
+ TotalProductos INT NOT NULL,
+ MontoTotal DECIMAL(10,2) NOT NULL,
+ Contacto VARCHAR(255) NOT NULL,
+ Telefono VARCHAR(20) NOT NULL,
+ Direccion VARCHAR(MAX) NOT NULL,
+ IdTransaccion VARCHAR(100),
+ FechaVenta DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE tb_detalle_venta (
+ IdDetalleVenta INT PRIMARY KEY IDENTITY(1,1),
+ IdVenta INT NOT NULL REFERENCES tb_venta(IdVenta),
+ IdProducto INT NOT NULL REFERENCES tb_producto(IdProducto),
+ Cantidad INT NOT NULL,
+ PrecioUnitario DECIMAL(10,2) NOT NULL,
+ Total DECIMAL(10,2) NOT NULL
+);
+
+-- Índices para rendimiento
+CREATE INDEX IX_producto_categoria ON tb_producto(IdCategoria);
+CREATE INDEX IX_producto_marca ON tb_producto(IdMarca);
+CREATE INDEX IX_venta_usuario ON tb_venta(IdUsuario);
+CREATE INDEX IX_venta_fecha ON tb_venta(FechaVenta);
+CREATE INDEX IX_carrito_usuario ON tb_carrito(IdUsuario);
+GO
+
+PRINT 'Tablas creadas correctamente.'
+GO
+

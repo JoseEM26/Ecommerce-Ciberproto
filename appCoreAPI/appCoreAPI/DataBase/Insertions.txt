@@ -1,0 +1,93 @@
+﻿-- =============================================
+-- 2. DATOS DE PRUEBA
+-- =============================================
+
+-- Categorías
+SET IDENTITY_INSERT tb_categoria ON;
+INSERT INTO tb_categoria (IdCategoria, Descripcion, Activo) VALUES
+(1,'Procesadores',1),(2,'Tarjetas de Video',1),(3,'Placas Madre',1),(4,'Memorias RAM',1),
+(5,'Almacenamiento SSD',1),(6,'Almacenamiento HDD',1),(7,'Gabinetes',1),(8,'Fuentes de Poder',1),
+(9,'Monitores',1),(10,'Teclados',1),(11,'Mouses',1),(12,'Auriculares y Parlantes',1);
+SET IDENTITY_INSERT tb_categoria OFF;
+
+-- Marcas
+SET IDENTITY_INSERT tb_marca ON;
+INSERT INTO tb_marca (IdMarca, Descripcion, Activo) VALUES
+(1,'Intel',1),(2,'AMD',1),(3,'NVIDIA',1),(4,'ASUS',1),(5,'MSI',1),(6,'Gigabyte',1),
+(7,'Corsair',1),(8,'Kingston',1),(9,'Samsung',1),(10,'Western Digital',1),
+(11,'AOC',1),(12,'Logitech',1),(13,'Razer',1),(14,'HyperX',1),(15,'Cooler Master',1);
+SET IDENTITY_INSERT tb_marca OFF;
+
+-- 30 Productos reales Perú 2025
+SET IDENTITY_INSERT tb_producto ON;
+INSERT INTO tb_producto (IdProducto, Nombre, Descripcion, IdMarca, IdCategoria, Precio, Stock, UrlImagen, Activo) VALUES
+(1,'Intel Core i5-13400F','10 núcleos / 16 hilos - 4.6GHz',1,1,899.00,15,'https://i.postimg.cc/0jK0K1jK/i5-13400f.jpg',1),
+(2,'AMD Ryzen 5 7600X','6 núcleos Zen 4 AM5',2,1,1099.00,8,'https://i.postimg.cc/3xVJ0vXv/ryzen5-7600x.jpg',1),
+(3,'RTX 4060 Ti 8GB ASUS Dual','DLSS 3 + Ray Tracing',4,2,1899.00,5,'https://i.postimg.cc/wjW5W5Wj/4060ti-asus.jpg',1),
+(4,'RTX 4070 MSI Ventus 12GB','Ideal 1440p',5,2,2799.00,3,'https://i.postimg.cc/0QJ0QJ0Q/4070-msi.jpg',1),
+(5,'ASUS Prime B650-Plus','AM5 DDR5 PCIe 5.0',4,3,899.00,10,'https://i.postimg.cc/5y5y5y5y/b650-plus.jpg',1),
+(6,'Corsair Vengeance 32GB DDR5 6000MHz','2x16GB CL36',7,4,699.00,20,'https://i.postimg.cc/0j0j0j0j/ddr5-corsair.jpg',1),
+(7,'Kingston NV2 1TB NVMe','3500MB/s',8,5,299.00,35,'https://i.postimg.cc/1t1t1t1t/nv2-1tb.jpg',1),
+(8,'Samsung 990 PRO 2TB','7450MB/s',9,5,799.00,7,'https://i.postimg.cc/2S2S2S2S/990pro-2tb.jpg',1),
+(9,'Monitor AOC 24G2SP 24" 165Hz IPS','1ms FreeSync',11,9,749.00,12,'https://i.postimg.cc/3J3J3J3J/24g2sp.jpg',1),
+(10,'Teclado Logitech G Pro X TKL','Switches GX Red RGB',12,10,599.00,9,'https://i.postimg.cc/4N4N4N4N/gpro-x.jpg',1),
+(11,'Mouse Razer DeathAdder V3 Pro','Sensor 30K inalámbrico',13,11,679.00,6,'https://i.postimg.cc/5N5N5N5N/deathadder-v3.jpg',1),
+(12,'Auriculares HyperX Cloud III Wireless','120h batería',14,12,549.00,14,'https://i.postimg.cc/6p6p6p6p/cloud3-wireless.jpg',1),
+(13,'Intel Core i9-13900K','24 núcleos 5.8GHz',1,1,2699.00,4,'https://i.postimg.cc/7h7h7h7h/i9-13900k.jpg',1),
+(14,'RTX 4090 Gigabyte Gaming OC 24GB','La bestia',6,2,8999.00,2,'https://i.postimg.cc/8P8P8P8P/4090-gigabyte.jpg',1),
+(15,'Gabinete Corsair 5000D Airflow Blanco','Cristal templado',7,7,649.00,8,'https://i.postimg.cc/9Q9Q9Q9Q/5000d.jpg',1),
+(16,'Fuente Corsair RM850x 80+ Gold','Full modular',7,8,599.00,15,'https://i.postimg.cc/fRfRfRfR/rm850x.jpg',1),
+(17,'SSD WD Black SN850X 1TB','7000MB/s',10,5,449.00,18,'https://i.postimg.cc/0j0j0j0j/sn850x.jpg',1),
+(18,'Monitor Samsung Odyssey G5 32" 1440p 165Hz','Curvo',9,9,1499.00,5,'https://i.postimg.cc/5y5y5y5y/odyssey-g5.jpg',1),
+(19,'Teclado Razer BlackWidow V4 Pro','Switches verdes',13,10,999.00,4,'https://i.postimg.cc/4N4N4N4N/blackwidow-v4.jpg',1),
+(20,'Mouse Logitech G Pro X Superlight 2','25K Hero inalámbrico',12,11,699.00,10,'https://i.postimg.cc/5N5N5N5N/superlight2.jpg',1),
+(21,'Placa MSI B550 Tomahawk','AM4 DDR4',5,3,699.00,12,'https://i.postimg.cc/5y5y5y5y/b550-tomahawk.jpg',1),
+(22,'RAM G.Skill Trident Z5 RGB 32GB DDR5 6400','CL32',7,4,799.00,9,'https://i.postimg.cc/0j0j0j0j/tridentz5.jpg',1),
+(23,'Gabinete Lian Li Lancool 216 RGB','Flujo aire',15,7,499.00,20,'https://i.postimg.cc/9Q9Q9Q9Q/lancool216.jpg',1),
+(24,'Fuente EVGA 1000W 80+ Platinum','Modular',7,8,899.00,6,'https://i.postimg.cc/fRfRfRfR/evga1000.jpg',1),
+(25,'HDD Seagate Barracuda 4TB','7200RPM',10,6,499.00,25,'https://i.postimg.cc/1t1t1t1t/barracuda4tb.jpg',1),
+(26,'Auriculares SteelSeries Arctis Nova Pro Wireless','Hi-Res',14,12,1499.00,3,'https://i.postimg.cc/6p6p6p6p/arctis-nova.jpg',1),
+(27,'Ryzen 7 7800X3D','El rey gaming',2,1,2199.00,6,'https://i.postimg.cc/3xVJ0vXv/7800x3d.jpg',1),
+(28,'RTX 4080 Super Founders Edition','16GB GDDR6X',3,2,5499.00,2,'https://i.postimg.cc/0QJ0QJ0Q/4080super.jpg',1),
+(29,'Monitor LG UltraGear 27" 4K 144Hz','IPS Nano',9,9,2499.00,4,'https://i.postimg.cc/3J3J3J3J/lg27-4k.jpg',1),
+(30,'Teclado mecánico Keychron Q1 Pro','Hot-swap inalámbrico',15,10,799.00,8,'https://i.postimg.cc/4N4N4N4N/keychron-q1.jpg',1);
+SET IDENTITY_INSERT tb_producto OFF;
+
+-- Usuarios (contraseñas hasheadas con SHA2_256 - la contraseña real es "admin123", "juan2025", etc.)
+SET IDENTITY_INSERT tb_usuario ON;
+INSERT INTO tb_usuario (IdUsuario, Nombres, Apellidos, Correo, Clave, Telefono, Rol, Activo, Reestablecer) VALUES
+(1, 'Administrador', 'del Sistema','admin@ciberproto.com', HASHBYTES('SHA2_256', 'admin123'), '987654321', 'ADMIN',1,0),
+(2,'Juan Carlos','Pérez Gómez','juanperez@gmail.com', HASHBYTES('SHA2_256', 'juan2025'), '987123456', 'CLIENTE',1,0),
+(3,'María Alejandra','López Ruiz','maria.lopez@hotmail.com', HASHBYTES('SHA2_256', 'maria123'), '965478123', 'CLIENTE',1,0),
+(4,'Carlos Eduardo','Ramírez Vega','cramirez@outlook.com', HASHBYTES('SHA2_256', 'carlos2025'), '912345678', 'CLIENTE',1,0),
+(5,'Ana Sofía','Torres Mendoza','anasofia@gmail.com', HASHBYTES('SHA2_256', 'ana12345'), '923456789', 'CLIENTE',1,0);
+SET IDENTITY_INSERT tb_usuario OFF;
+
+-- Tarjetas de pago (solo para clientes)
+SET IDENTITY_INSERT tb_tarjeta_pago ON;
+INSERT INTO tb_tarjeta_pago (IdTarjeta, IdUsuario, NumeroTarjeta, Titular, FechaExpiracion, CVV, Tipo, Predeterminada, Activo) VALUES
+(1,2,'4111-1111-1111-1111','JUAN C PÉREZ GÓMEZ','12/27','123','VISA',1,1),
+(2,2,'5500-0000-0000-0004','JUAN CARLOS PEREZ','09/26','456','MASTERCARD',0,1),
+(3,3,'3782-82246310005','MARIA A LÓPEZ RUIZ','11/28','7890','AMEX',1,1);
+SET IDENTITY_INSERT tb_tarjeta_pago OFF;
+
+-- Carrito de ejemplo
+INSERT INTO tb_carrito (IdUsuario, IdProducto, Cantidad) VALUES
+(2,1,1),(2,3,1),(2,7,2),(4,9,1),(4,10,1);
+
+-- Venta de ejemplo completa (usuario 3 compró 3 productos)
+DECLARE @IdVenta INT
+
+INSERT INTO tb_venta (IdUsuario, IdTarjeta, TotalProductos, MontoTotal, Contacto, Telefono, Direccion, IdTransaccion)
+VALUES (3, 3, 3, 2347.00, 'María Alejandra López', '965478123', 'Av. Primavera 1234, Surco, Lima', 'VENTA-2025-001')
+
+SET @IdVenta = SCOPE_IDENTITY()
+
+INSERT INTO tb_detalle_venta (IdVenta, IdProducto, Cantidad, PrecioUnitario, Total) VALUES
+(@IdVenta, 2, 1, 1099.00, 1099.00),
+(@IdVenta, 6, 1, 699.00, 699.00),
+(@IdVenta, 9, 1, 749.00, 749.00);
+
+PRINT 'Datos de prueba insertados correctamente (30 productos + venta completa).'
+GO
+
