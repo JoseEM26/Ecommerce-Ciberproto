@@ -89,6 +89,18 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Validar correo duplicado en otro usuario
+    IF EXISTS (
+        SELECT 1
+        FROM tb_usuario
+        WHERE Correo = @Correo
+          AND IdUsuario <> @IdUsuario
+    )
+    BEGIN
+        RAISERROR('El correo ya está siendo usado por otro usuario', 16, 1);
+        RETURN;
+    END
+
     UPDATE tb_usuario
     SET
         Nombres   = @Nombres,
@@ -99,7 +111,6 @@ BEGIN
     WHERE IdUsuario = @IdUsuario;
 END
 GO
-
 -- login
 CREATE OR ALTER PROCEDURE usp_usuario_login
     @Correo VARCHAR(255),
@@ -113,13 +124,26 @@ BEGIN
         Nombres,
         Apellidos,
         Correo,
-        Rol
+        Telefono,
+        Rol,
+        Activo
     FROM tb_usuario
     WHERE Correo = @Correo
       AND Clave  = @Clave
       AND Activo = 1;
-=======
-﻿USE CiberProtoDatabase
+END
+GO
+--eliminar
+CREATE PROCEDURE sp_usuario_eliminar
+    @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE tb_usuario
+    SET Activo = 0
+    WHERE IdUsuario = @IdUsuario;
+END
 GO
 
 -- =============================================
