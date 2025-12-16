@@ -1,0 +1,27 @@
+# Ignorar carpetas de compilación
+[Bb]in/
+[Oo]bj/
+
+# Ignorar configuraciones de usuario de Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+
+# Ignorar archivos de logs y temporales
+*.log
+*.tmp
+
+# Ignorar configuraciones sensibles (Opcional pero recomendado)
+appsettings.Development.json
+appsettings.local.json
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Bases de datos locales generadas (como las de Copilot que te aparecieron)
+*.db
+*.db-shm
+*.db-wal

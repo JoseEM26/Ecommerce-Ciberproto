@@ -1,1 +1,190 @@
-﻿
+﻿USE CiberProtoDatabase
+GO
+
+-- =============================================
+-- CATEGORIA 
+-- =============================================
+CREATE OR ALTER PROCEDURE sp_ListarCategoria
+AS
+BEGIN
+    SELECT IdCategoria, Descripcion, Activo FROM tb_categoria 
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GuardarCategoria
+(
+    @Descripcion VARCHAR(255)
+)
+AS
+BEGIN
+    -- Solo inserta si no existe duplicado
+    IF NOT EXISTS (SELECT * FROM tb_categoria WHERE Descripcion = @Descripcion)
+    BEGIN
+        INSERT INTO tb_categoria(Descripcion, Activo) VALUES (@Descripcion, 1)
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_EditarCategoria
+(
+    @IdCategoria INT,
+    @Descripcion VARCHAR(255),
+    @Activo BIT
+)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT * FROM tb_categoria WHERE Descripcion = @Descripcion AND IdCategoria != @IdCategoria)
+    BEGIN
+        UPDATE tb_categoria SET 
+            Descripcion = @Descripcion,
+            Activo = @Activo
+        WHERE IdCategoria = @IdCategoria
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_EliminarCategoria
+(
+    @IdCategoria INT
+)
+AS
+BEGIN
+    -- Borrado lógico simple
+    UPDATE tb_categoria SET Activo = 0 WHERE IdCategoria = @IdCategoria
+END
+GO
+
+-- =============================================
+-- MARCA 
+-- =============================================
+CREATE OR ALTER PROCEDURE sp_ListarMarca
+AS
+BEGIN
+    SELECT IdMarca, Descripcion, Activo FROM tb_marca
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GuardarMarca
+(
+    @Descripcion VARCHAR(255)
+)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT * FROM tb_marca WHERE Descripcion = @Descripcion)
+    BEGIN
+        INSERT INTO tb_marca(Descripcion, Activo) VALUES (@Descripcion, 1)
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_EditarMarca
+(
+    @IdMarca INT,
+    @Descripcion VARCHAR(255),
+    @Activo BIT
+)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT * FROM tb_marca WHERE Descripcion = @Descripcion AND IdMarca != @IdMarca)
+    BEGIN
+        UPDATE tb_marca SET 
+            Descripcion = @Descripcion,
+            Activo = @Activo
+        WHERE IdMarca = @IdMarca
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_EliminarMarca
+(
+    @IdMarca INT
+)
+AS
+BEGIN
+    -- Cascada: Desactivamos marca y sus productos
+    UPDATE tb_marca SET Activo = 0 WHERE IdMarca = @IdMarca
+    UPDATE tb_producto SET Activo = 0 WHERE IdMarca = @IdMarca
+END
+GO
+
+-- =============================================
+-- PRODUCTO 
+-- =============================================
+CREATE OR ALTER PROCEDURE sp_ListarProducto
+AS
+BEGIN
+    SELECT 
+        p.IdProducto, 
+        p.Nombre, 
+        p.Descripcion,
+        p.IdMarca, m.Descripcion AS NombreMarca,
+        p.IdCategoria, c.Descripcion AS NombreCategoria,
+        p.Precio, 
+        p.Stock, 
+        p.UrlImagen, 
+        p.Activo
+    FROM tb_producto p
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria c ON p.IdCategoria = c.IdCategoria
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_GuardarProducto
+(
+    @Nombre VARCHAR(255),
+    @Descripcion VARCHAR(500),
+    @IdMarca INT,
+    @IdCategoria INT,
+    @Precio DECIMAL(10,2),
+    @Stock INT,
+    @UrlImagen VARCHAR(MAX)
+)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT * FROM tb_producto WHERE Nombre = @Nombre)
+    BEGIN
+        INSERT INTO tb_producto(Nombre, Descripcion, IdMarca, IdCategoria, Precio, Stock, UrlImagen, Activo)
+        VALUES (@Nombre, @Descripcion, @IdMarca, @IdCategoria, @Precio, @Stock, @UrlImagen, 1)
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_EditarProducto
+(
+    @IdProducto INT,
+    @Nombre VARCHAR(255),
+    @Descripcion VARCHAR(500),
+    @IdMarca INT,
+    @IdCategoria INT,
+    @Precio DECIMAL(10,2),
+    @Stock INT,
+    @UrlImagen VARCHAR(MAX),
+    @Activo BIT
+)
+AS
+BEGIN
+    IF NOT EXISTS (SELECT * FROM tb_producto WHERE Nombre = @Nombre AND IdProducto != @IdProducto)
+    BEGIN
+        UPDATE tb_producto SET 
+            Nombre = @Nombre,
+            Descripcion = @Descripcion,
+            IdMarca = @IdMarca,
+            IdCategoria = @IdCategoria,
+            Precio = @Precio,
+            Stock = @Stock,
+            UrlImagen = @UrlImagen,
+            Activo = @Activo
+        WHERE IdProducto = @IdProducto
+    END
+END
+GO
+
+CREATE OR ALTER PROCEDURE sp_EliminarProducto
+(
+    @IdProducto INT
+)
+AS
+BEGIN
+    UPDATE tb_producto SET Activo = 0 WHERE IdProducto = @IdProducto
+END
+GO
