@@ -1,5 +1,5 @@
-
-
+using appCoreAPI.Services.DAO;
+using appCoreAPI.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<ICarritoService, CarritoDAO>();
+builder.Services.AddScoped<IVentaService, VentaDAO>();
+
 
 var app = builder.Build();
 
