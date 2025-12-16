@@ -334,3 +334,558 @@ BEGIN
 >>>>>>> main
 END
 GO
+
+
+/*-----------------------------------------PROCEDURES DE CARRITO-----------------------------------------*/
+-- Listar todo el carrito
+CREATE PROCEDURE sp_ListarCarrito
+AS
+BEGIN
+    SELECT 
+        c.IdCarrito,
+        c.IdUsuario,
+        c.IdProducto,
+        c.Cantidad,
+        p.Nombre AS NombreProducto,
+        p.Descripcion AS DescripcionProducto,
+        p.Precio AS PrecioProducto,
+        p.Stock,
+        p.UrlImagen AS ImagenProducto,
+        p.Activo AS ActivoProducto,
+        m.Descripcion AS NombreMarca,
+        cat.Descripcion AS NombreCategoria
+    FROM tb_carrito c
+    INNER JOIN tb_producto p ON c.IdProducto = p.IdProducto
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria cat ON p.IdCategoria = cat.IdCategoria
+    WHERE p.Activo = 1
+    ORDER BY c.IdCarrito DESC
+END
+GO
+
+-- Listar carrito por usuario
+CREATE PROCEDURE sp_ListarCarritoPorUsuario
+    @IdUsuario INT
+AS
+BEGIN
+    SELECT 
+        c.IdCarrito,
+        c.IdUsuario,
+        c.IdProducto,
+        c.Cantidad,
+        p.Nombre AS NombreProducto,
+        p.Descripcion AS DescripcionProducto,
+        p.Precio AS PrecioProducto,
+        p.Stock,
+        p.UrlImagen AS ImagenProducto,
+        p.Activo AS ActivoProducto,
+        m.Descripcion AS NombreMarca,
+        cat.Descripcion AS NombreCategoria
+    FROM tb_carrito c
+    INNER JOIN tb_producto p ON c.IdProducto = p.IdProducto
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria cat ON p.IdCategoria = cat.IdCategoria
+    WHERE c.IdUsuario = @IdUsuario 
+        AND p.Activo = 1
+    ORDER BY c.IdCarrito DESC
+END
+GO
+
+-- Obtener item específico del carrito
+CREATE PROCEDURE sp_ObtenerCarritoUsuarioProducto
+    @IdUsuario INT,
+    @IdProducto INT
+AS
+BEGIN
+    SELECT 
+        c.IdCarrito,
+        c.IdUsuario,
+        c.IdProducto,
+        c.Cantidad,
+        p.Nombre AS NombreProducto,
+        p.Precio AS PrecioProducto,
+        p.UrlImagen AS ImagenProducto
+    FROM tb_carrito c
+    INNER JOIN tb_producto p ON c.IdProducto = p.IdProducto
+    WHERE c.IdUsuario = @IdUsuario 
+        AND c.IdProducto = @IdProducto
+        AND p.Activo = 1
+END
+GO
+
+-- Agregar o actualizar carrito (MERGE para evitar duplicados)
+CREATE PROCEDURE sp_GuardarCarrito
+    @IdUsuario INT,
+    @IdProducto INT,
+    @Cantidad INT
+AS
+BEGIN
+    BEGIN TRY
+        -- Verificar si el producto existe y está activo
+        IF NOT EXISTS (SELECT 1 FROM tb_producto WHERE IdProducto = @IdProducto AND Activo = 1)
+        BEGIN
+            RAISERROR('Producto no disponible', 16, 1)
+            RETURN
+        END
+        
+        -- Verificar stock
+        DECLARE @StockDisponible INT
+        SELECT @StockDisponible = Stock FROM tb_producto WHERE IdProducto = @IdProducto
+        
+        IF @StockDisponible < @Cantidad
+        BEGIN
+            RAISERROR('Stock insuficiente', 16, 1)
+            RETURN
+        END
+        
+        -- MERGE para insertar o actualizar
+        MERGE tb_carrito AS target
+        USING (SELECT @IdUsuario, @IdProducto, @Cantidad) AS source (IdUsuario, IdProducto, Cantidad)
+        ON (target.IdUsuario = source.IdUsuario AND target.IdProducto = source.IdProducto)
+        WHEN MATCHED THEN
+            UPDATE SET Cantidad = source.Cantidad
+        WHEN NOT MATCHED THEN
+            INSERT (IdUsuario, IdProducto, Cantidad) 
+            VALUES (source.IdUsuario, source.IdProducto, source.Cantidad);
+        
+        SELECT 'Producto agregado al carrito correctamente' AS Mensaje
+    END TRY
+    BEGIN CATCH
+        SELECT ERROR_MESSAGE() AS Mensaje
+    END CATCH
+END
+GO
+
+-- Actualizar cantidad en carrito
+CREATE PROCEDURE sp_ActualizarCarrito
+    @IdCarrito INT,
+    @Cantidad INT
+AS
+BEGIN
+    BEGIN TRY
+        -- Verificar que el carrito existe
+        IF NOT EXISTS (SELECT 1 FROM tb_carrito WHERE IdCarrito = @IdCarrito)
+        BEGIN
+            RAISERROR('Item no encontrado en carrito', 16, 1)
+            RETURN
+        END
+        
+        -- Obtener el producto para verificar stock
+        DECLARE @IdProducto INT
+        SELECT @IdProducto = IdProducto FROM tb_carrito WHERE IdCarrito = @IdCarrito
+        
+        DECLARE @StockDisponible INT
+        SELECT @StockDisponible = Stock FROM tb_producto WHERE IdProducto = @IdProducto
+        
+        IF @StockDisponible < @Cantidad
+        BEGIN
+            RAISERROR('Stock insuficiente', 16, 1)
+            RETURN
+        END
+        
+        UPDATE tb_carrito 
+        SET Cantidad = @Cantidad 
+        WHERE IdCarrito = @IdCarrito
+        
+        SELECT 'Carrito actualizado correctamente' AS Mensaje
+    END TRY
+    BEGIN CATCH
+        SELECT ERROR_MESSAGE() AS Mensaje
+    END CATCH
+END
+GO
+
+-- Eliminar item del carrito
+CREATE PROCEDURE sp_EliminarCarrito
+    @IdCarrito INT
+AS
+BEGIN
+    BEGIN TRY
+        DELETE FROM tb_carrito WHERE IdCarrito = @IdCarrito
+        SELECT 'Item eliminado del carrito' AS Mensaje
+    END TRY
+    BEGIN CATCH
+        SELECT ERROR_MESSAGE() AS Mensaje
+    END CATCH
+END
+GO
+
+-- Eliminar por usuario y producto
+CREATE PROCEDURE sp_EliminarCarritoUsuarioProducto
+    @IdUsuario INT,
+    @IdProducto INT
+AS
+BEGIN
+    BEGIN TRY
+        DELETE FROM tb_carrito 
+        WHERE IdUsuario = @IdUsuario AND IdProducto = @IdProducto
+        
+        SELECT 'Producto eliminado del carrito' AS Mensaje
+    END TRY
+    BEGIN CATCH
+        SELECT ERROR_MESSAGE() AS Mensaje
+    END CATCH
+END
+GO
+
+-- Vaciar carrito de un usuario
+CREATE PROCEDURE sp_VaciarCarritoUsuario
+    @IdUsuario INT
+AS
+BEGIN
+    BEGIN TRY
+        DELETE FROM tb_carrito WHERE IdUsuario = @IdUsuario
+        SELECT 'Carrito vaciado correctamente' AS Mensaje
+    END TRY
+    BEGIN CATCH
+        SELECT ERROR_MESSAGE() AS Mensaje
+    END CATCH
+END
+GO
+
+
+/*-----------------------------------------AHORA PROCEDURES PARA VENTAS-----------------------------------------*/
+
+-- Listar todas las ventas
+CREATE PROCEDURE sp_ListarVenta
+AS
+BEGIN
+    SELECT 
+        v.IdVenta,
+        v.IdUsuario,
+        v.IdTarjeta,
+        v.TotalProductos,
+        v.MontoTotal,
+        v.Contacto,
+        v.Telefono,
+        v.Direccion,
+        v.IdTransaccion,
+        v.FechaVenta,
+        u.Nombres + ' ' + u.Apellidos AS NombreUsuario,
+        u.Correo AS CorreoUsuario,
+        tp.Tipo AS TipoTarjeta,
+        LEFT(tp.NumeroTarjeta, 4) + '****' + RIGHT(tp.NumeroTarjeta, 4) AS NumeroTarjeta
+    FROM tb_venta v
+    LEFT JOIN tb_usuario u ON v.IdUsuario = u.IdUsuario
+    LEFT JOIN tb_tarjeta_pago tp ON v.IdTarjeta = tp.IdTarjeta
+    ORDER BY v.FechaVenta DESC
+END
+GO
+
+-- Listar ventas por usuario
+CREATE PROCEDURE sp_ListarVentaPorUsuario
+    @IdUsuario INT
+AS
+BEGIN
+    SELECT 
+        v.IdVenta,
+        v.IdUsuario,
+        v.IdTarjeta,
+        v.TotalProductos,
+        v.MontoTotal,
+        v.Contacto,
+        v.Telefono,
+        v.Direccion,
+        v.IdTransaccion,
+        v.FechaVenta,
+        u.Nombres + ' ' + u.Apellidos AS NombreUsuario,
+        u.Correo AS CorreoUsuario,
+        tp.Tipo AS TipoTarjeta,
+        LEFT(tp.NumeroTarjeta, 4) + '****' + RIGHT(tp.NumeroTarjeta, 4) AS NumeroTarjeta
+    FROM tb_venta v
+    LEFT JOIN tb_usuario u ON v.IdUsuario = u.IdUsuario
+    LEFT JOIN tb_tarjeta_pago tp ON v.IdTarjeta = tp.IdTarjeta
+    WHERE v.IdUsuario = @IdUsuario
+    ORDER BY v.FechaVenta DESC
+END
+GO
+
+--------- Registrar venta (con validación de carrito y stock)
+CREATE PROCEDURE sp_RegistrarVenta
+    @IdUsuario INT,
+    @IdTarjeta INT = NULL,
+    @Contacto VARCHAR(255),
+    @Telefono VARCHAR(20),
+    @Direccion VARCHAR(MAX),
+    @IdTransaccion VARCHAR(100) = NULL
+AS
+BEGIN
+    BEGIN TRANSACTION
+    BEGIN TRY
+        -- Validar que el usuario existe
+        IF NOT EXISTS (SELECT 1 FROM tb_usuario WHERE IdUsuario = @IdUsuario AND Activo = 1)
+        BEGIN
+            RAISERROR('Usuario no válido', 16, 1)
+            ROLLBACK
+            RETURN
+        END
+        
+        -- Validar tarjeta si se proporciona
+        IF @IdTarjeta IS NOT NULL 
+            AND NOT EXISTS (SELECT 1 FROM tb_tarjeta_pago WHERE IdTarjeta = @IdTarjeta AND IdUsuario = @IdUsuario AND Activo = 1)
+        BEGIN
+            RAISERROR('Tarjeta no válida', 16, 1)
+            ROLLBACK
+            RETURN
+        END
+        
+        -- Obtener items del carrito
+        DECLARE @CarritoItems TABLE (
+            IdProducto INT,
+            Cantidad INT,
+            Precio DECIMAL(10,2),
+            StockDisponible INT
+        )
+        
+        INSERT INTO @CarritoItems (IdProducto, Cantidad, Precio, StockDisponible)
+        SELECT 
+            c.IdProducto,
+            c.Cantidad,
+            p.Precio,
+            p.Stock
+        FROM tb_carrito c
+        INNER JOIN tb_producto p ON c.IdProducto = p.IdProducto
+        WHERE c.IdUsuario = @IdUsuario AND p.Activo = 1
+        
+        -- Validar stock
+        IF EXISTS (SELECT 1 FROM @CarritoItems WHERE Cantidad > StockDisponible)
+        BEGIN
+            RAISERROR('Stock insuficiente para algunos productos', 16, 1)
+            ROLLBACK
+            RETURN
+        END
+        
+        -- Calcular totales
+        DECLARE @TotalProductos INT
+        DECLARE @MontoTotal DECIMAL(10,2)
+        
+        SELECT 
+            @TotalProductos = SUM(Cantidad),
+            @MontoTotal = SUM(Cantidad * Precio)
+        FROM @CarritoItems
+        
+        -- Insertar venta
+        DECLARE @IdVenta INT
+        
+        INSERT INTO tb_venta (
+            IdUsuario, IdTarjeta, TotalProductos, MontoTotal, 
+            Contacto, Telefono, Direccion, IdTransaccion
+        )
+        VALUES (
+            @IdUsuario, @IdTarjeta, @TotalProductos, @MontoTotal,
+            @Contacto, @Telefono, @Direccion, @IdTransaccion
+        )
+        
+        SET @IdVenta = SCOPE_IDENTITY()
+        
+        -- Insertar detalles y actualizar stock
+        INSERT INTO tb_detalle_venta (IdVenta, IdProducto, Cantidad, PrecioUnitario, Total)
+        SELECT 
+            @IdVenta,
+            IdProducto,
+            Cantidad,
+            Precio,
+            Cantidad * Precio
+        FROM @CarritoItems
+        
+        -- Actualizar stock de productos
+        UPDATE p
+        SET p.Stock = p.Stock - ci.Cantidad
+        FROM tb_producto p
+        INNER JOIN @CarritoItems ci ON p.IdProducto = ci.IdProducto
+        
+        -- Vaciar carrito del usuario
+        DELETE FROM tb_carrito WHERE IdUsuario = @IdUsuario
+        
+        COMMIT TRANSACTION
+        
+        -- Retornar resultado
+        SELECT 
+            'Venta registrada correctamente' AS Mensaje,
+            @IdVenta AS IdVentaGenerado,
+            @TotalProductos AS TotalProductos,
+            @MontoTotal AS MontoTotal
+        
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION
+        SELECT ERROR_MESSAGE() AS Mensaje, 0 AS IdVentaGenerado
+    END CATCH
+END
+GO
+
+--------- Aqui termina el procedure sp_RegistrarVenta
+
+--- Listar detalles de una venta
+CREATE PROCEDURE sp_ListarDetalleVenta
+    @IdVenta INT
+AS
+BEGIN
+    SELECT 
+        dv.IdDetalleVenta,
+        dv.IdVenta,
+        dv.IdProducto,
+        dv.Cantidad,
+        dv.PrecioUnitario,
+        dv.Total,
+        p.Nombre AS NombreProducto,
+        p.Descripcion AS DescripcionProducto,
+        p.UrlImagen AS ImagenProducto,
+        m.Descripcion AS NombreMarca,
+        cat.Descripcion AS NombreCategoria
+    FROM tb_detalle_venta dv
+    INNER JOIN tb_producto p ON dv.IdProducto = p.IdProducto
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria cat ON p.IdCategoria = cat.IdCategoria
+    WHERE dv.IdVenta = @IdVenta
+    ORDER BY dv.IdDetalleVenta
+END
+GO
+
+
+-- Productos por categoría (con paginación)
+CREATE PROCEDURE sp_ProductosPorCategoria
+    @IdCategoria INT,
+    @Pagina INT = 1,
+    @RegistrosPorPagina INT = 12
+AS
+BEGIN
+    SELECT 
+        p.IdProducto,
+        p.Nombre,
+        p.Descripcion,
+        p.Precio,
+        p.Stock,
+        p.UrlImagen,
+        p.Activo,
+        m.Descripcion AS NombreMarca,
+        cat.Descripcion AS NombreCategoria,
+        -- Para paginación
+        COUNT(*) OVER() AS TotalRegistros
+    FROM tb_producto p
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria cat ON p.IdCategoria = cat.IdCategoria
+    WHERE p.IdCategoria = @IdCategoria 
+        AND p.Activo = 1
+        AND cat.Activo = 1
+    ORDER BY p.Nombre
+    OFFSET (@Pagina - 1) * @RegistrosPorPagina ROWS
+    FETCH NEXT @RegistrosPorPagina ROWS ONLY
+END
+GO
+
+-- Productos por marca (con paginación)
+CREATE PROCEDURE sp_ProductosPorMarca
+    @IdMarca INT,
+    @Pagina INT = 1,
+    @RegistrosPorPagina INT = 12
+AS
+BEGIN
+    SELECT 
+        p.IdProducto,
+        p.Nombre,
+        p.Descripcion,
+        p.Precio,
+        p.Stock,
+        p.UrlImagen,
+        p.Activo,
+        m.Descripcion AS NombreMarca,
+        cat.Descripcion AS NombreCategoria,
+        COUNT(*) OVER() AS TotalRegistros
+    FROM tb_producto p
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria cat ON p.IdCategoria = cat.IdCategoria
+    WHERE p.IdMarca = @IdMarca 
+        AND p.Activo = 1
+        AND m.Activo = 1
+    ORDER BY p.Nombre
+    OFFSET (@Pagina - 1) * @RegistrosPorPagina ROWS
+    FETCH NEXT @RegistrosPorPagina ROWS ONLY
+END
+GO
+
+-- Vista detallada de un producto
+CREATE PROCEDURE sp_ProductoDetalle
+    @IdProducto INT
+AS
+BEGIN
+    SELECT 
+        p.IdProducto,
+        p.Nombre,
+        p.Descripcion,
+        p.Precio,
+        p.Stock,
+        p.UrlImagen,
+        p.Activo,
+        m.IdMarca,
+        m.Descripcion AS NombreMarca,
+        cat.IdCategoria,
+        cat.Descripcion AS NombreCategoria,
+        -- Información adicional
+        (SELECT COUNT(*) FROM tb_carrito WHERE IdProducto = p.IdProducto) AS EnCarritos,
+        (SELECT COUNT(*) FROM tb_detalle_venta WHERE IdProducto = p.IdProducto) AS VecesVendido
+    FROM tb_producto p
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria cat ON p.IdCategoria = cat.IdCategoria
+    WHERE p.IdProducto = @IdProducto 
+        AND p.Activo = 1
+END
+GO
+
+-- Verificar si usuario tiene tarjetas registradas
+CREATE PROCEDURE sp_VerificarTarjetasUsuario
+    @IdUsuario INT
+AS
+BEGIN
+    SELECT 
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM tb_tarjeta_pago WHERE IdUsuario = @IdUsuario AND Activo = 1) 
+            THEN 'SI' 
+            ELSE 'NO' 
+        END AS TieneTarjetas,
+        COUNT(*) AS CantidadTarjetas
+    FROM tb_tarjeta_pago
+    WHERE IdUsuario = @IdUsuario AND Activo = 1
+END
+GO
+
+-- Listar tarjetas del usuario (para checkout)
+CREATE PROCEDURE sp_ListarTarjetasUsuario
+    @IdUsuario INT
+AS
+BEGIN
+    SELECT 
+        IdTarjeta,
+        Tipo,
+        LEFT(NumeroTarjeta, 4) + '****' + RIGHT(NumeroTarjeta, 4) AS NumeroTarjeta,
+        Titular,
+        FechaExpiracion,
+        Predeterminada
+    FROM tb_tarjeta_pago
+    WHERE IdUsuario = @IdUsuario AND Activo = 1
+    ORDER BY Predeterminada DESC
+END
+GO
+
+-- Verificar autenticación y datos de usuario
+CREATE PROCEDURE sp_VerificarUsuarioLogueado
+    @Correo VARCHAR(255)
+AS
+BEGIN
+    SELECT 
+        u.IdUsuario,
+        u.Nombres,
+        u.Apellidos,
+        u.Correo,
+        u.Rol,
+        u.Activo,
+        CASE 
+            WHEN EXISTS (SELECT 1 FROM tb_tarjeta_pago WHERE IdUsuario = u.IdUsuario AND Activo = 1) 
+            THEN 1 
+            ELSE 0 
+        END AS TieneTarjetas,
+        (SELECT COUNT(*) FROM tb_carrito WHERE IdUsuario = u.IdUsuario) AS ItemsCarrito
+    FROM tb_usuario u
+    WHERE u.Correo = @Correo AND u.Activo = 1
+END
+GO
