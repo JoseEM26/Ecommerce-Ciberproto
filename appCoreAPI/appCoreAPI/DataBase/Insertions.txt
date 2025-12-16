@@ -56,11 +56,11 @@ SET IDENTITY_INSERT tb_producto OFF;
 -- Usuarios (contraseñas hasheadas con SHA2_256 - la contraseña real es "admin123", "juan2025", etc.)
 SET IDENTITY_INSERT tb_usuario ON;
 INSERT INTO tb_usuario (IdUsuario, Nombres, Apellidos, Correo, Clave, Telefono, Rol, Activo, Reestablecer) VALUES
-(1, 'Administrador', 'del Sistema','admin@ciberproto.com', HASHBYTES('SHA2_256', 'admin123'), '987654321', 'ADMIN',1,0),
-(2,'Juan Carlos','Pérez Gómez','juanperez@gmail.com', HASHBYTES('SHA2_256', 'juan2025'), '987123456', 'CLIENTE',1,0),
-(3,'María Alejandra','López Ruiz','maria.lopez@hotmail.com', HASHBYTES('SHA2_256', 'maria123'), '965478123', 'CLIENTE',1,0),
-(4,'Carlos Eduardo','Ramírez Vega','cramirez@outlook.com', HASHBYTES('SHA2_256', 'carlos2025'), '912345678', 'CLIENTE',1,0),
-(5,'Ana Sofía','Torres Mendoza','anasofia@gmail.com', HASHBYTES('SHA2_256', 'ana12345'), '923456789', 'CLIENTE',1,0);
+(1, 'Administrador', 'del Sistema','admin@ciberproto.com',  'admin123', '987654321', 'ADMIN',1),
+(2,'Juan Carlos','Pérez Gómez','juanperez@gmail.com', 'juan2025', '987123456', 'CLIENTE',1),
+(3,'María Alejandra','López Ruiz','maria.lopez@hotmail.com',  'maria123', '965478123', 'CLIENTE',1),
+(4,'Carlos Eduardo','Ramírez Vega','cramirez@outlook.com',  'carlos2025', '912345678', 'CLIENTE',1),
+(5,'Ana Sofía','Torres Mendoza','anasofia@gmail.com',  'ana12345', '923456789', 'CLIENTE',1);
 SET IDENTITY_INSERT tb_usuario OFF;
 
 -- Tarjetas de pago (solo para clientes)

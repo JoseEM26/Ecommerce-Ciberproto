@@ -1,4 +1,149 @@
-﻿USE CiberProtoDatabase
+<<<<<<< HEAD
+﻿
+USE CiberProtoDatabase
+GO
+
+-- =============================================
+-- PROCEDIMIENTOS PARA USUARIO
+-- =============================================
+
+--listar usuarios
+CREATE OR ALTER PROCEDURE usp_listarUsuario
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        IdUsuario,
+        Nombres,
+        Apellidos,
+        Correo,
+        Telefono,
+        Rol,
+        Activo,
+        FechaRegistro
+    FROM tb_usuario;
+END
+GO
+
+--registrar usuarios
+CREATE OR ALTER PROCEDURE usp_registrarUsuario
+    @Nombres   VARCHAR(255),
+    @Apellidos VARCHAR(255),
+    @Correo    VARCHAR(255),
+    @Clave     VARCHAR(100),
+    @Telefono  VARCHAR(20),
+    @Rol       VARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO tb_usuario (
+        Nombres,
+        Apellidos,
+        Correo,
+        Clave,
+        Telefono,
+        Rol
+    )
+    VALUES (
+        @Nombres,
+        @Apellidos,
+        @Correo,
+        @Clave,
+        @Telefono,
+        ISNULL(@Rol, 'CLIENTE')
+    );
+END
+GO
+
+--obtener usuario por id
+CREATE OR ALTER PROCEDURE usp_obtenerUsuarioById
+    @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        IdUsuario,
+        Nombres,
+        Apellidos,
+        Correo,
+        Telefono,
+        Rol,
+        Activo
+    FROM tb_usuario
+    WHERE IdUsuario = @IdUsuario;
+END
+GO
+
+-- actualizar usuario
+CREATE OR ALTER PROCEDURE usp_actualizarUsuario
+    @IdUsuario INT,
+    @Nombres   VARCHAR(255),
+    @Apellidos VARCHAR(255),
+    @Correo    VARCHAR(255),
+    @Telefono  VARCHAR(20),
+    @Activo    BIT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Validar correo duplicado en otro usuario
+    IF EXISTS (
+        SELECT 1
+        FROM tb_usuario
+        WHERE Correo = @Correo
+          AND IdUsuario <> @IdUsuario
+    )
+    BEGIN
+        RAISERROR('El correo ya está siendo usado por otro usuario', 16, 1);
+        RETURN;
+    END
+
+    UPDATE tb_usuario
+    SET
+        Nombres   = @Nombres,
+        Apellidos = @Apellidos,
+        Correo    = @Correo,
+        Telefono  = @Telefono,
+        Activo    = @Activo
+    WHERE IdUsuario = @IdUsuario;
+END
+GO
+-- login
+CREATE OR ALTER PROCEDURE usp_usuario_login
+    @Correo VARCHAR(255),
+    @Clave  VARCHAR(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        IdUsuario,
+        Nombres,
+        Apellidos,
+        Correo,
+        Telefono,
+        Rol,
+        Activo
+    FROM tb_usuario
+    WHERE Correo = @Correo
+      AND Clave  = @Clave
+      AND Activo = 1;
+END
+GO
+--eliminar
+CREATE PROCEDURE sp_usuario_eliminar
+    @IdUsuario INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE tb_usuario
+    SET Activo = 0
+    WHERE IdUsuario = @IdUsuario;
+END
 GO
 
 -- =============================================
@@ -186,5 +331,6 @@ CREATE OR ALTER PROCEDURE sp_EliminarProducto
 AS
 BEGIN
     UPDATE tb_producto SET Activo = 0 WHERE IdProducto = @IdProducto
+>>>>>>> main
 END
 GO
