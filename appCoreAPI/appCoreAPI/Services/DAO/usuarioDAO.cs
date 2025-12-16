@@ -10,7 +10,7 @@ namespace appCoreAPI.Services.DAO
         private readonly string cadena;
         public usuarioDAO()
         {
-            cadena = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("DefaultConnection");
+            cadena = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("sql");
         }
         public IEnumerable<Usuario> GetAllUsuarios()
         {
@@ -133,14 +133,62 @@ namespace appCoreAPI.Services.DAO
             }
         }
 
-        public int EliminarUsuario(int idUsuario)
+        public string EliminarUsuario(int idUsuario)
         {
-            throw new NotImplementedException();
+            string mensaje = string.Empty;
+
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                try
+                {
+                    SqlCommand cmd = new("sp_usuario_eliminar", cn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);
+
+                    cn.Open();
+                    int i = cmd.ExecuteNonQuery();
+                    mensaje = $"Se eliminaron  {1} registros";
+
+                }
+                catch (SqlException ex)
+                {
+                    mensaje = ex.Message;
+                }
+                finally { cn.Close(); }
+
+                return mensaje;
+
+            }
         }
 
         public Usuario Login(string correo, string clave)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                SqlCommand cmd = new("usp_usuario_login", cn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Correo", correo);
+                cmd.Parameters.AddWithValue("@Clave", clave);
+
+                cn.Open();
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                if (!dr.Read())
+                    return null;
+
+                return new Usuario
+                {
+                    IdUsuario = dr.GetInt32(0),
+                    Nombres = dr.GetString(1),
+                    Apellidos = dr.GetString(2),
+                    Correo = dr.GetString(3),
+                    Telefono = dr.GetString(4),
+                    Rol = dr.GetString(5),
+                    Activo = dr.GetBoolean(6)
+                };
+            }
         }
 
     }

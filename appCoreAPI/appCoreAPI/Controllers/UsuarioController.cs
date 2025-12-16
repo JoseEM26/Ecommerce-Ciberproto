@@ -1,4 +1,4 @@
-﻿using appCoreAPI.DTO;
+﻿
 using appCoreAPI.Models;
 using appCoreAPI.Services.DAO;
 using Microsoft.AspNetCore.Http;
@@ -37,6 +37,24 @@ namespace appCoreAPI.Controllers
         {
             var mensaje = await Task.Run(() => new usuarioDAO().ActualizarUsuario(usuario));
             return Ok(mensaje);
+        }
+        [HttpDelete("EliminarUsuario")]
+        public async Task<ActionResult<string>> EliminarUsuario(int id)
+        {
+            var mensaje = await Task.Run(() => new usuarioDAO().EliminarUsuario(id));
+            return Ok(mensaje);
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<Usuario>> Login(string correo, string clave)
+        {
+            var usuario = await Task.Run(() =>
+                new usuarioDAO().Login(correo, clave));
+
+            if (usuario == null)
+                return Unauthorized("Credenciales incorrectas");
+
+            return Ok(usuario);
         }
 
     }

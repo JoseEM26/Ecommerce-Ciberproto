@@ -9,7 +9,7 @@ namespace appCoreAPI.Services.Interface
         string RegistrarUsuario(Usuario usuario);
         string ActualizarUsuario(Usuario usuario);
         Usuario GetUsuarioById(int id);
-        int EliminarUsuario(int idUsuario);
+        string EliminarUsuario(int idUsuario);
 
         
         Usuario Login(string correo, string clave);
