@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService1";
+
+
+package ventas;
+
+service ServicioVentas {
+  rpc GetAll (EmptyVenta) returns (Ventas);
+  rpc GetByUsuario (ByUsuario) returns (Ventas);
+  rpc GetByProducto (ByProducto) returns (Ventas);
+  rpc GetBetweenFechas (Fechas) returns (Ventas);
+}
+
+message EmptyVenta {}
+
+message ByUsuario {
+	int32 idUsuario = 1;
+}
+message ByProducto {
+  string nombreProducto = 1;
+}
+
+
+message Fechas {
+	string fechaInicio = 1;
+	string fechaFin = 2;
+}
+
+message Venta {
+	int32 idVenta = 1;
+	int32 idUsuario = 2;
+	int32 idTarjeta = 3;
+	int32 totalProductos = 4;
+	string montoTotal = 5;
+	string contacto = 6;
+	string telefono = 7;
+	string direccion = 8;
+	string idTransaccion = 9;
+	string fechaVenta = 10;
+	string nombreUsuario = 11;
+	string nombreProducto = 12;
+}
+
+message Ventas {
+	repeated Venta items = 1;
+}

@@ -916,3 +916,82 @@ BEGIN
     WHERE p.Activo = 1;
 END
 GO
+
+CREATE OR ALTER PROCEDURE sp_ListarProductoPorMarcagrpc
+   @IdMarca INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.IdProducto,
+        p.Nombre,
+        p.Descripcion,
+        p.IdMarca,
+        m.Descripcion AS Marca,
+        p.IdCategoria,
+        c.Descripcion AS Categoria,
+        CONVERT(varchar, p.Precio) AS Precio,
+        p.Stock,
+        p.UrlImagen
+    FROM tb_producto p
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria c ON p.IdCategoria = c.IdCategoria
+    WHERE p.Activo = 1
+      AND p.IdMarca = @IdMarca
+END
+GO
+
+-- =============================================
+-- GRPC
+--PRODUCTO -- Listar todas las ventas GRPC
+-- =============================================
+
+CREATE OR ALTER PROCEDURE sp_ListarVentagrpc
+AS
+BEGIN
+    SELECT 
+        v.IdVenta,
+        v.IdUsuario,
+        v.IdTarjeta,
+        v.TotalProductos,
+        CONVERT(varchar, v.MontoTotal) AS MontoTotal,
+        v.Contacto,
+        v.Telefono,
+        v.Direccion,
+        v.IdTransaccion,
+        CONVERT(varchar, v.FechaVenta) AS FechaVenta,
+        u.Nombres + ' ' + u.Apellidos AS NombreUsuario,
+		p.Nombre AS NombreProducto    
+    FROM tb_venta v
+	INNER JOIN tb_detalle_venta dv ON v.IdVenta = dv.IdVenta
+    INNER JOIN tb_producto p ON dv.IdProducto = p.IdProducto
+    INNER JOIN tb_usuario u ON v.IdUsuario = u.IdUsuario
+	where u.Rol = 'CLIENTE'
+    ORDER BY v.FechaVenta DESC 
+END
+GO
+
+-- =============================================
+-- GRPC
+--PRODUCTO -- Listar todas los Usuarios GRPC
+-- =============================================
+
+CREATE OR ALTER PROCEDURE sp_ListarUsuariogrpc
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        u.IdUsuario,
+        u.Nombres,
+        u.Apellidos,
+        u.Correo,
+        u.Telefono,
+        u.Rol,
+        CONVERT(varchar, Activo) AS Activo,
+        CONVERT(varchar, FechaRegistro) AS FechaRegistro
+    FROM tb_usuario u
+    ORDER BY Nombres, Apellidos;
+END
+GO

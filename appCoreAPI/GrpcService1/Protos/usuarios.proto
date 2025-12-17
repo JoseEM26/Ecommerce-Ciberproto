@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService1";
+
+package usuarios;
+
+
+service ServicioUsuarios {
+  rpc GetAll (EmptyUsuario) returns (Usuarios);
+  rpc BuscarPorNombre (BuscarNombre) returns (Usuarios);
+}
+
+message EmptyUsuario {}
+
+message BuscarNombre {
+  string texto = 1; // nombre, apellido o ambos
+}
+
+message Usuario {
+  int32 idUsuario = 1;
+  string nombres = 2;
+  string apellidos = 3;
+  string correo = 4;
+  string telefono = 5;
+  string rol = 6;
+  string activo = 7;
+  string fechaRegistro = 8;
+}
+
+message Usuarios {
+  repeated Usuario items = 1;
+}
+
