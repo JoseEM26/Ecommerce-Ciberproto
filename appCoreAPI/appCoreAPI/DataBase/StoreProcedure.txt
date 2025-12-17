@@ -134,7 +134,7 @@ BEGIN
 END
 GO
 --eliminar
-CREATE PROCEDURE sp_usuario_eliminar
+CREATE PROCEDURE usp_usuario_eliminar
     @IdUsuario INT
 AS
 BEGIN
@@ -887,5 +887,32 @@ BEGIN
         (SELECT COUNT(*) FROM tb_carrito WHERE IdUsuario = u.IdUsuario) AS ItemsCarrito
     FROM tb_usuario u
     WHERE u.Correo = @Correo AND u.Activo = 1
+END
+GO
+
+-- =============================================
+-- GRPC
+--PRODUCTO 
+-- =============================================
+CREATE OR ALTER PROCEDURE sp_ListarProductogrpc
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT 
+        p.IdProducto,
+        p.Nombre,
+        p.Descripcion,
+        p.IdMarca,
+        m.Descripcion AS Marca,
+        p.IdCategoria,
+        c.Descripcion AS Categoria,
+        CONVERT(varchar, p.Precio) as Precio,
+        p.Stock,
+        p.UrlImagen
+    FROM tb_producto p
+    INNER JOIN tb_marca m ON p.IdMarca = m.IdMarca
+    INNER JOIN tb_categoria c ON p.IdCategoria = c.IdCategoria
+    WHERE p.Activo = 1;
 END
 GO

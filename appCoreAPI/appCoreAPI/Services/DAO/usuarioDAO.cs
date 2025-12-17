@@ -141,7 +141,7 @@ namespace appCoreAPI.Services.DAO
             {
                 try
                 {
-                    SqlCommand cmd = new("sp_usuario_eliminar", cn);
+                    SqlCommand cmd = new("usp_usuario_eliminar", cn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@IdUsuario", idUsuario);

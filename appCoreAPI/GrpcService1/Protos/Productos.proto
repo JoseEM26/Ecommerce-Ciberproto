@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcService1";
+
+
+package productos;
+
+//definimos el servicio y sus metodos...
+service ServicioProductos {
+    rpc GetAll (Empty) returns (Productos);
+    rpc GetByMarca (Marca) returns (Productos);
+}
+
+message Empty {}
+
+message Marca {
+    int32 idMarca = 1;
+}
+
+message Producto {
+    int32 idProducto = 1;
+    string nombre = 2;
+    string descripcion = 3;
+
+    int32 idMarca = 4;
+    string marca = 5;
+
+    int32 idCategoria = 6;
+    string categoria = 7;
+
+    string precio = 8;
+    int32 stock = 9;
+    string urlImagen = 10;
+}
+
+message Productos {
+    repeated Producto items = 1;
+}

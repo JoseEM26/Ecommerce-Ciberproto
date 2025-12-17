@@ -53,9 +53,9 @@ INSERT INTO tb_producto (IdProducto, Nombre, Descripcion, IdMarca, IdCategoria, 
 (30,'Teclado mecánico Keychron Q1 Pro','Hot-swap inalámbrico',15,10,799.00,8,'https://i.postimg.cc/4N4N4N4N/keychron-q1.jpg',1);
 SET IDENTITY_INSERT tb_producto OFF;
 
--- Usuarios (contraseñas hasheadas con SHA2_256 - la contraseña real es "admin123", "juan2025", etc.)
+-- Usuarios 
 SET IDENTITY_INSERT tb_usuario ON;
-INSERT INTO tb_usuario (IdUsuario, Nombres, Apellidos, Correo, Clave, Telefono, Rol, Activo, Reestablecer) VALUES
+INSERT INTO tb_usuario (IdUsuario, Nombres, Apellidos, Correo, Clave, Telefono, Rol, Activo) VALUES
 (1, 'Administrador', 'del Sistema','admin@ciberproto.com',  'admin123', '987654321', 'ADMIN',1),
 (2,'Juan Carlos','Pérez Gómez','juanperez@gmail.com', 'juan2025', '987123456', 'CLIENTE',1),
 (3,'María Alejandra','López Ruiz','maria.lopez@hotmail.com',  'maria123', '965478123', 'CLIENTE',1),
