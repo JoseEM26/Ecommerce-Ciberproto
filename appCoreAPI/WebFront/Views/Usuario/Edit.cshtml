@@ -1,0 +1,112 @@
+﻿@model WebFront.Models.UsuarioModel
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark">Editar Perfil</h2>
+        <span class="text-muted">Modificando la información del usuario ID: <strong>#@Model.IdUsuario</strong></span>
+    </div>
+    <a asp-action="ListarUsuarios" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-bottom border-warning">
+                <h5 class="card-title mb-0 text-warning-emphasis">
+                    <i class="bi bi-pencil-square me-2"></i>Actualizar Credenciales
+                </h5>
+            </div>
+
+            <div class="card-body p-4">
+
+                @if (ViewBag.mensaje != null)
+                {
+                    <div class="alert @(ViewBag.mensaje.ToString().Contains("Error") ? "alert-danger" : "alert-info") alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        @ViewBag.mensaje
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="IdUsuario" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombres" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input asp-for="Nombres" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Nombres" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Apellidos" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
+                                <input asp-for="Apellidos" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Apellidos" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Correo" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Correo" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Correo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Telefono" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Telefono" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 mb-4 bg-light rounded-3 border">
+                                <div class="row">
+                                    <div class="col-md-6 mb-2 mb-md-0">
+                                        <label asp-for="FechaRegistro" class="form-label fw-bold small text-muted"></label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text border-0"><i class="bi bi-calendar-check"></i></span>
+                                            <input asp-for="FechaRegistro" class="form-control border-0 bg-transparent shadow-none" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-center mt-3 mt-md-0">
+                                        <div class="form-check form-switch custom-switch">
+                                            <input asp-for="Activo" class="form-check-input" type="checkbox" role="switch" id="switchActivo">
+                                            <label class="form-check-label fw-bold ms-2" for="switchActivo">Usuario Activo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="submit" class="btn btn-warning px-5 shadow-sm text-dark fw-bold">
+                            <i class="bi bi-arrow-repeat me-2"></i> Actualizar Datos
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

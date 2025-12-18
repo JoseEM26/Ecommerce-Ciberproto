@@ -1,0 +1,99 @@
+﻿@model WebFront.Models.UsuarioModel
+
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark">Registrar Nuevo Usuario</h2>
+        <span class="text-muted">Complete los datos para crear una nueva cuenta</span>
+    </div>
+    <a asp-action="ListarUsuarios" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0 text-primary"><i class="bi bi-person-lines-fill me-2"></i>Información Personal</h5>
+            </div>
+            <div class="card-body p-4">
+
+                @if (ViewBag.mensaje != null)
+                {
+                    <div class="alert @(ViewBag.mensaje.ToString().Contains("Error") ? "alert-danger" : "alert-success") alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi @(ViewBag.mensaje.ToString().Contains("Error") ? "bi-exclamation-triangle-fill" : "bi-check-circle-fill") me-2"></i>
+                        @ViewBag.mensaje
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="Create" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombres" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input asp-for="Nombres" class="form-control" placeholder="Ej. Juan" />
+                            </div>
+                            <span asp-validation-for="Nombres" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Apellidos" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
+                                <input asp-for="Apellidos" class="form-control" placeholder="Ej. Pérez" />
+                            </div>
+                            <span asp-validation-for="Apellidos" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Correo" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Correo" class="form-control" type="email" placeholder="usuario@ejemplo.com" />
+                            </div>
+                            <span asp-validation-for="Correo" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Telefono" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Telefono" class="form-control" placeholder="987654321" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Clave" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                <input asp-for="Clave" class="form-control" type="password" placeholder="Mínimo 8 caracteres" />
+                            </div>
+                            <span asp-validation-for="Clave" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <div class="d-grid d-md-flex justify-content-md-end gap-2">
+                        <button type="reset" class="btn btn-light px-4">Limpiar Formulario</button>
+                        <button type="submit" class="btn btn-primary px-5 shadow-sm">
+                            <i class="bi bi-save me-2"></i> Guardar Usuario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
