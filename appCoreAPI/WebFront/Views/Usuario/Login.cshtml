@@ -1,0 +1,86 @@
+﻿@model WebFront.Models.UsuarioModel
+@{
+    Layout = null; // No usamos el layout del dashboard para el login
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - WebFront</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .btn-login {
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="text-center mb-4">
+                    <i class="bi bi-shield-lock-fill text-primary" style="font-size: 3rem;"></i>
+                    <h2 class="fw-bold">Bienvenido</h2>
+                    <p class="text-muted">Inicia sesión para acceder al panel</p>
+                </div>
+
+                <div class="card login-card">
+                    <div class="card-body p-4">
+                        @if (ViewBag.mensaje != null)
+                        {
+                            <div class="alert alert-danger small py-2">
+                                <i class="bi bi-exclamation-circle me-2"></i>@ViewBag.mensaje
+                            </div>
+                        }
+
+                        <form asp-action="Login" method="post">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">CORREO ELECTRÓNICO</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" name="correo" class="form-control border-start-0 bg-light" placeholder="correo@ejemplo.com" required />
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold">CONTRASEÑA</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-key"></i></span>
+                                    <input type="password" name="clave" class="form-control border-start-0 bg-light" placeholder="••••••••" required />
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-login shadow-sm">
+                                    Ingresar al Sistema
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-muted small">&copy; 2025 CiberProt - Todos los derechos reservados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
