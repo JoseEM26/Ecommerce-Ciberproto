@@ -110,7 +110,56 @@ namespace WebFront.Controllers
             return View(await Task.Run(() => reg));
         }
 
+        //==================================================
+        // GET: Usuario/Login
+        public IActionResult Login()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Login(string correo, string clave)
+        {
+            if (string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(clave))
+            {
+                ViewBag.mensaje = "Ingrese sus credenciales";
+                return View();
+            }
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ApiServicio);
+
+                // Enviamos los parámetros a tu endpoint: api/Usuario/login?correo=...&clave=...
+                // Nota: Si tu API espera un objeto, usa StringContent como en el Create.
+                HttpResponseMessage response = await client.PostAsync($"login?correo={correo}&clave={clave}", null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    var usuario = JsonConvert.DeserializeObject<UsuarioModel>(apiResponse);
+
+                    if (usuario != null)
+                    {
+                        // Guardar en Sesión (Necesitas tener habilitado services.AddSession() en Program.cs)
+                        HttpContext.Session.SetString("UsuarioNombre", usuario.Nombres + " " + usuario.Apellidos);
+                        HttpContext.Session.SetString("UsuarioRol", usuario.Rol);
+                        HttpContext.Session.SetInt32("UsuarioID", usuario.IdUsuario);
+
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+
+            ViewBag.mensaje = "Correo o clave incorrectos";
+            return View();
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
 
 
     }
