@@ -76,6 +76,16 @@
                             </div>
                             <span asp-validation-for="Clave" class="text-danger small"></span>
                         </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Rol" class="form-label fw-bold small text-uppercase text-muted"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-shield-lock"></i></span>
+                                <select asp-for="Rol" class="form-select">
+                                    <option value="CLIENTE">Cliente</option>
+                                    <option value="ADMIN">Administrador</option>
+                                </select>
+                            </div>
                     </div>
 
                     <hr class="text-muted opacity-25">

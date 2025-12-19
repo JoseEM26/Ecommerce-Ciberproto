@@ -97,7 +97,7 @@ namespace WebFront.Controllers
                 ViewBag.Error = "No se pudo conectar con el servicio de reportes: " + ex.Message;
             }
 
-            // 3. MAPEO: Convertimos los datos crudos de gRPC a nuestro Modelo bonito
+            
             List<VentaModel> listaReporte = new List<VentaModel>();
 
             if (respuestaGrpc != null && respuestaGrpc.Items != null)

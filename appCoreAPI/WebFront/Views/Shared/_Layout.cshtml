@@ -97,10 +97,8 @@
 
                     <div class="d-flex align-items-center">
                         <div class="me-3 position-relative">
-                            <i class="bi bi-bell fs-5 text-secondary"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                <span class="visually-hidden">New alerts</span>
-                            </span>
+                            
+                            <p>@(Context.Session.GetString("UsuarioNombre") ?? "Invitado")</p>
                         </div>
                     </div>
                 </div>
@@ -121,7 +119,7 @@
                         <span class="fw-bold text-dark">WebFront Dashboard</span>
                     </div>
                     <div class="mb-2">
-                        &copy; 2025 - Desarrollado por: <strong>Nicolas, Jhuli, Josue, Royser</strong>
+                        &copy; 2025 - Desarrollado por: <strong>Nicolas, Jhuli, Jose, Royser</strong>
                     </div>
                     <div>
                         <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacidad</a>

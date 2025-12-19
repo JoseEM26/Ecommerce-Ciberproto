@@ -137,10 +137,8 @@
             const secciones = document.querySelectorAll(".filtro-section");
 
             function actualizarFiltros() {
-                // 1. Ocultar todos
                 secciones.forEach(el => el.style.display = "none");
 
-                // 2. Mostrar el seleccionado
                 const valor = combo.value;
                 const target = document.getElementById("filtro-" + valor);
                 if (target) {
@@ -148,10 +146,8 @@
                 }
             }
 
-            // Ejecutar al inicio (por si recargamos la página con un filtro activo)
             actualizarFiltros();
 
-            // Ejecutar cada vez que cambie el select
             combo.addEventListener("change", actualizarFiltros);
         });
     </script>
