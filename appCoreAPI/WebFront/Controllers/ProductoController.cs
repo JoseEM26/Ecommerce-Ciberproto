@@ -86,7 +86,7 @@ namespace WebFront.Controllers
             using (var api = new HttpClient())
             {
                 api.BaseAddress = new Uri(apiUrl);
-                // Llamamos al GET de la API para obtener los datos actuales
+                
                 var response = await api.GetAsync($"Producto/Obtener/{id}");
 
                 if (response.IsSuccessStatusCode)

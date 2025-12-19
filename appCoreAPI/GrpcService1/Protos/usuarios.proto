@@ -13,7 +13,7 @@ service ServicioUsuarios {
 message EmptyUsuario {}
 
 message BuscarNombre {
-  string texto = 1; // nombre, apellido o ambos
+  string texto = 1;
 }
 
 message Usuario {

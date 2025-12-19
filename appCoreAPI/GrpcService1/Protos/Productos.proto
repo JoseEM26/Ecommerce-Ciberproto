@@ -5,7 +5,7 @@ option csharp_namespace = "GrpcService1";
 
 package productos;
 
-//definimos el servicio y sus metodos...
+
 service ServicioProductos {
     rpc GetAll (Empty) returns (Productos);
     rpc GetByMarca (Marca) returns (Productos);
