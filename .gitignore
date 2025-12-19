@@ -1,27 +1,47 @@
-# Ignorar carpetas de compilación
+## --- Carpetas de Compilación (VITAL) ---
 [Bb]in/
 [Oo]bj/
+out/
+publish/
 
-# Ignorar configuraciones de usuario de Visual Studio
+## --- Visual Studio & VS Code ---
 .vs/
+.vscode/
 *.user
-*.userosscache
-*.sln.docstates
 *.suo
+*.sln.docstates
 
-# Ignorar archivos de logs y temporales
-*.log
-*.tmp
+## --- NuGet ---
+*.nupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
 
-# Ignorar configuraciones sensibles (Opcional pero recomendado)
+## --- Configuración Sensible (MUY IMPORTANTE) ---
+# Ignoramos configuraciones de desarrollo que tengan claves o rutas locales
 appsettings.Development.json
-appsettings.local.json
+appsettings.Local.json
+secrets.json
+.env
 
-# Archivos de sistema operativo
+## --- Bases de Datos Locales ---
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+## --- Archivos gRPC Generados ---
+# Es mejor no subir el código generado, solo los archivos .proto
+# Así el compañero que baje el código lo genera al compilar
+*_grpc.cs
+*.pb.cs
+
+## --- Frontend (si usas Node/npm) ---
+node_modules/
+dist/
+.cache/
+
+## --- Archivos del Sistema ---
 .DS_Store
 Thumbs.db
-
-# Bases de datos locales generadas (como las de Copilot que te aparecieron)
-*.db
-*.db-shm
-*.db-wal
+desktop.ini

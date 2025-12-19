@@ -155,6 +155,30 @@ namespace WebFront.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Perfil()
+        {
+            int? userId = HttpContext.Session.GetInt32("UsuarioID");
+
+            if (userId == null) return RedirectToAction("Login", "Usuario");
+
+            UsuarioModel usuario = new UsuarioModel();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ApiServicio);
+
+                HttpResponseMessage response = await client.GetAsync("getUsuarioById/" + userId);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    usuario = JsonConvert.DeserializeObject<UsuarioModel>(json);
+                }
+            }
+
+            return View(usuario);
+        }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

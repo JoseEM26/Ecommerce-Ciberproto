@@ -1,0 +1,158 @@
+﻿@model IEnumerable<WebFront.Models.VentaModel>
+
+@{
+    ViewData["Title"] = "Reporte de Ventas";
+    // Recuperamos el tipo de filtro para mantener la selección al recargar
+    string filtroActual = ViewBag.TipoFiltro as string ?? "todos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark">Reporte de Ventas</h2>
+        <span class="text-muted">Consulta histórica mediante gRPC</span>
+    </div>
+
+    <div class="d-flex gap-3">
+        <a asp-action="Inventario" class="btn btn-outline-dark shadow-sm">
+            <i class="bi bi-box-seam me-2"></i> Ver Inventario
+        </a>
+        <div class="text-end border-start ps-3">
+            <h4 class="fw-bold text-success mb-0">
+                S/ @Model.Sum(x => x.MontoTotal).ToString("N2")
+            </h4>
+            <small class="text-muted">TOTAL EN PANTALLA</small>
+        </div>
+    </div>
+</div>
+<div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card-body py-3">
+        <form asp-action="Filtrar" method="get" id="formReportes">
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small text-muted">TIPO DE REPORTE</label>
+                    <select name="tipoFiltro" id="comboFiltro" class="form-select border-primary">
+                        <!option value="todos" @(filtroActual == "todos" ? "selected" : "")>-- Ver Todo --</!option>
+                        <!option value="fechas" @(filtroActual == "fechas" ? "selected" : "")>Por Rango de Fechas</!option>
+                        <!option value="cliente" @(filtroActual == "cliente" ? "selected" : "")>Por Cliente</!option>
+                        <!option value="producto" @(filtroActual == "producto" ? "selected" : "")>Por Producto</!option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 filtro-section" id="filtro-fechas" style="display:none;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">Desde</span>
+                        <input type="date" name="fechaInicio" class="form-control" value="@ViewBag.FechaInicio" />
+                        <span class="input-group-text bg-white">Hasta</span>
+                        <input type="date" name="fechaFin" class="form-control" value="@ViewBag.FechaFin" />
+                    </div>
+                </div>
+
+                <div class="col-md-4 filtro-section" id="filtro-cliente" style="display:none;">
+                    <select name="idUsuario" class="form-select" asp-items="ViewBag.Clientes">
+                        <option value="">-- Seleccione Cliente --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 filtro-section" id="filtro-producto" style="display:none;">
+                    <input type="text" name="nombreProducto" class="form-control" placeholder="Escribe el nombre..." value="@ViewBag.NombreProducto" />
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                        <i class="bi bi-search me-2"></i> Consultar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 table-striped">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th class="ps-4">ID</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th class="text-center">Cant.</th>
+                        <th>Transacción</th>
+                        <th class="text-end pe-4">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-clipboard-data fs-1 d-block mb-3"></i>
+                                No hay resultados para mostrar.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold text-muted">#@item.IdVenta</td>
+                                <td>
+                                    <i class="bi bi-calendar3 me-1 text-muted"></i>
+                                    @item.Fecha.Substring(0, 10)
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Cliente</div>
+                                    <small class="text-muted" style="font-size:0.75rem">
+                                        <i class="bi bi-telephone me-1"></i>@item.Telefono
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">@item.Producto</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border">@item.Cantidad</span>
+                                </td>
+                                <td class="text-muted small">
+                                    <code>@item.IdTransaccion</code>
+                                </td>
+                                <td class="text-end pe-4 fw-bold text-success">
+                                    S/ @item.MontoTotal.ToString("N2")
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const combo = document.getElementById("comboFiltro");
+            const secciones = document.querySelectorAll(".filtro-section");
+
+            function actualizarFiltros() {
+                // 1. Ocultar todos
+                secciones.forEach(el => el.style.display = "none");
+
+                // 2. Mostrar el seleccionado
+                const valor = combo.value;
+                const target = document.getElementById("filtro-" + valor);
+                if (target) {
+                    target.style.display = "block";
+                }
+            }
+
+            // Ejecutar al inicio (por si recargamos la página con un filtro activo)
+            actualizarFiltros();
+
+            // Ejecutar cada vez que cambie el select
+            combo.addEventListener("change", actualizarFiltros);
+        });
+    </script>
+}

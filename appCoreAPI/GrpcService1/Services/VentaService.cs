@@ -6,14 +6,14 @@ namespace GrpcService1.Services
     public class VentaService:ServicioVentas.ServicioVentasBase
     {
         private readonly ILogger<VentaService> _logger;
+        private readonly string cadena;
 
-        public VentaService(ILogger<VentaService> logger)
+
+        public VentaService(ILogger<VentaService> logger, IConfiguration configuration)
         {
             _logger = logger;
+            cadena = configuration.GetConnectionString("sql");
         }
-
-        string cadena = "server=.;database=CiberProtoDatabase; trusted_Connection=true;" +
-       "MultipleActiveResultSets=true; TrustServerCertificate=false; Encrypt=false";
 
         List<Venta> Lista()
         {

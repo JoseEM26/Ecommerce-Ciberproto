@@ -7,14 +7,14 @@ namespace GrpcService1.Services
     {
 
         private readonly ILogger<ProductoService> _logger;
+        private readonly string cadena;
 
-        public ProductoService(ILogger<ProductoService> logger)
+
+        public ProductoService(ILogger<ProductoService> logger, IConfiguration configuration)
         {
             _logger = logger;
+            cadena = configuration.GetConnectionString("sql");
         }
-
-        string cadena = "server=.;database=CiberProtoDatabase; trusted_Connection=true;" +
-       "MultipleActiveResultSets=true; TrustServerCertificate=false; Encrypt=false";
 
 
         List<Producto> Lista()

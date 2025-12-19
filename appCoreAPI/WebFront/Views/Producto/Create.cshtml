@@ -1,0 +1,110 @@
+﻿@model WebFront.Models.ProductoModel
+
+@{
+    ViewData["Title"] = "Nuevo Producto";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark">Nuevo Producto</h2>
+        <span class="text-muted">Registrar un nuevo artículo en el catálogo</span>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-bottom border-success">
+                <h5 class="card-title mb-0 text-success">
+                    <i class="bi bi-box-seam-fill me-2"></i>Información del Producto
+                </h5>
+            </div>
+
+            <div class="card-body p-4">
+                @if (ViewBag.Mensaje != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Mensaje
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-action="Create" method="post">
+                    <div class="row g-3">
+
+                        <div class="col-md-12">
+                            <label asp-for="Nombre" class="form-label fw-bold small text-muted">NOMBRE DEL PRODUCTO</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ej. Tarjeta Gráfica RTX 4060..." />
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="Descripcion" class="form-label fw-bold small text-muted">DESCRIPCIÓN</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="2" placeholder="Detalles técnicos, características..."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="IdMarca" class="form-label fw-bold small text-muted">MARCA</label>
+                            <select asp-for="IdMarca" class="form-select" asp-items="ViewBag.Marcas">
+                                <option value="">-- Seleccione Marca --</option>
+                            </select>
+                            <span asp-validation-for="IdMarca" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="IdCategoria" class="form-label fw-bold small text-muted">CATEGORÍA</label>
+                            <select asp-for="IdCategoria" class="form-select" asp-items="ViewBag.Categorias">
+                                <option value="">-- Seleccione Categoría --</option>
+                            </select>
+                            <span asp-validation-for="IdCategoria" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Precio" class="form-label fw-bold small text-muted">PRECIO (S/)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">S/</span>
+                                <input asp-for="Precio" type="number" step="0.01" class="form-control" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="Precio" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Stock" class="form-label fw-bold small text-muted">STOCK INICIAL</label>
+                            <input asp-for="Stock" type="number" class="form-control" placeholder="0" />
+                            <span asp-validation-for="Stock" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <div class="form-check form-switch p-2 border rounded w-100 bg-light">
+                                <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="Activo" checked>
+                                <label class="form-check-label fw-bold" asp-for="Activo">Producto Activo</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="UrlImagen" class="form-label fw-bold small text-muted">URL IMAGEN</label>
+                            <input asp-for="UrlImagen" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" />
+                            <div class="form-text text-muted">Copia y pega la dirección web de la imagen del producto.</div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Index" class="btn btn-light text-muted">Cancelar</a>
+                        <button type="submit" class="btn btn-success px-5 shadow-sm fw-bold">
+                            <i class="bi bi-check-lg me-2"></i> Registrar Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
