@@ -1,0 +1,90 @@
+﻿@model WebFront.Models.UsuarioModel
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+                <div class="card-header bg-primary py-5 text-center border-0"
+                     style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);">
+
+                    <div class="mb-3">
+                        <div class="bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm"
+                             style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-bounding-box text-primary fs-1"></i>
+                        </div>
+                    </div>
+
+                    <h3 class="text-white fw-bold">@Model.Nombres @Model.Apellidos</h3>
+                    <span class="badge rounded-pill bg-white text-primary fw-bold text-uppercase px-3 shadow-sm">
+                        @Model.Rol
+                    </span>
+                </div>
+
+                <div class="card-body p-4 bg-white">
+                    <div class="mb-4">
+                        <h6 class="text-primary fw-bold text-uppercase border-bottom pb-2 mb-3" style="letter-spacing: 1px;">
+                            <i class="bi bi-info-circle me-2"></i>Información del Usuario
+                        </h6>
+                    </div>
+
+                    <div class="vstack gap-3">
+                        <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3">
+                            <span class="text-muted small fw-bold">ID USUARIO</span>
+                            <span class="badge bg-dark rounded-pill"># @Model.IdUsuario</span>
+                        </div>
+
+                        <div class="p-2 border-bottom">
+                            <label class="form-label text-muted small fw-bold mb-0">CORREO ELECTRÓNICO</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-envelope me-2 text-info"></i>
+                                <span class="text-dark">@Model.Correo</span>
+                            </div>
+                        </div>
+
+                        <div class="p-2 border-bottom">
+                            <label class="form-label text-muted small fw-bold mb-0">TELÉFONO</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-phone me-2 text-info"></i>
+                                <span class="text-dark">@(string.IsNullOrEmpty(Model.Telefono) ? "No registrado" : Model.Telefono)</span>
+                            </div>
+                        </div>
+
+                        <div class="p-2">
+                            <label class="form-label text-muted small fw-bold mb-0">ESTADO ACTUAL</label>
+                            <div class="mt-1">
+                                @if (Model.Activo)
+                                {
+                                    <span class="text-success fw-bold">
+                                        <i class="bi bi-patch-check-fill me-1"></i> Cuenta Activa
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-bold">
+                                        <i class="bi bi-slash-circle me-1"></i> Inactiva
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light border-0 py-4 text-center">
+                    <div class="d-grid gap-2 col-8 mx-auto">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill shadow-sm">
+                            <i class="bi bi-house-door me-2"></i>Volver al Inicio
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-center text-muted mt-3 small">
+                Registrado desde: @Model.FechaRegistro.ToString("dd/MM/yyyy")
+            </p>
+        </div>
+    </div>
+</div>
