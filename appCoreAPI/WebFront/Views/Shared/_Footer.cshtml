@@ -1,0 +1,231 @@
+﻿<style>
+    .footer-modern {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+        color: #e2e8f0;
+        padding: 60px 0 0;
+        margin-top: 80px;
+    }
+
+    .footer-brand {
+        font-size: 1.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+    }
+
+    .footer-description {
+        color: #cbd5e0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .footer-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: #fff;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+    .footer-link {
+        color: #cbd5e0;
+        text-decoration: none;
+        display: block;
+        padding: 8px 0;
+        transition: 0.3s;
+        font-size: 0.95rem;
+    }
+
+        .footer-link:hover {
+            color: #667eea;
+            padding-left: 10px;
+        }
+
+    .social-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        font-size: 1.2rem;
+        margin-right: 10px;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+        .social-icon:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: translateY(-5px);
+            color: #fff;
+        }
+
+    .footer-bottom {
+        background: rgba(0,0,0,0.2);
+        padding: 25px 0;
+        margin-top: 50px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+        .footer-bottom p {
+            margin: 0;
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+    .payment-icons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .payment-icon {
+        background: #fff;
+        padding: 8px 15px;
+        border-radius: 8px;
+        font-size: 1.5rem;
+    }
+
+    .newsletter-input {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        padding: 12px 15px;
+        border-radius: 8px 0 0 8px;
+        width: 100%;
+    }
+
+        .newsletter-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.15);
+            border-color: #667eea;
+        }
+
+    .newsletter-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        padding: 12px 25px;
+        border-radius: 0 8px 8px 0;
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .newsletter-btn:hover {
+            transform: translateX(3px);
+        }
+</style>
+
+<footer class="footer-modern">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Columna: Sobre Nosotros -->
+            <div class="col-lg-4 col-md-6">
+                <div class="footer-brand">CiberProto</div>
+                <p class="footer-description">
+                    Tu tienda de confianza para tecnología gaming y profesional.
+                    Ofrecemos los mejores productos con garantía oficial y soporte técnico especializado.
+                </p>
+                <div class="mt-4">
+                    <a href="#" class="social-icon">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="bi bi-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Columna: Enlaces Rápidos -->
+            <div class="col-lg-2 col-md-6">
+                <h5 class="footer-title">Tienda</h5>
+                <a asp-controller="Tienda" asp-action="Index" class="footer-link">Inicio</a>
+                <a asp-controller="Catalogo" asp-action="Index" class="footer-link">Catálogo</a>
+                <a asp-controller="Carrito" asp-action="Index" class="footer-link">Carrito</a>
+                <a href="#" class="footer-link">Ofertas</a>
+                <a href="#" class="footer-link">Nuevos</a>
+            </div>
+
+            <!-- Columna: Información -->
+            <div class="col-lg-2 col-md-6">
+                <h5 class="footer-title">Información</h5>
+                <a asp-controller="Institucional" asp-action="Nosotros" class="footer-link">Nosotros</a>
+                <a asp-controller="Institucional" asp-action="Contacto" class="footer-link">Contacto</a>
+                <a href="#" class="footer-link">FAQ</a>
+                <a href="#" class="footer-link">Envíos</a>
+                <a href="#" class="footer-link">Devoluciones</a>
+            </div>
+
+            <!-- Columna: Newsletter -->
+            <div class="col-lg-4 col-md-6">
+                <h5 class="footer-title">Newsletter</h5>
+                <p class="footer-description">
+                    Suscríbete para recibir ofertas exclusivas y las últimas novedades.
+                </p>
+                <div class="input-group mt-3">
+                    <input type="email" class="newsletter-input" placeholder="Tu email">
+                    <button class="newsletter-btn">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <p class="footer-description mb-2">
+                        <i class="bi bi-shield-check"></i> Métodos de pago seguros
+                    </p>
+                    <div class="payment-icons">
+                        <span class="payment-icon"><i class="bi bi-credit-card-fill text-primary"></i></span>
+                        <span class="payment-icon"><i class="bi bi-paypal text-primary"></i></span>
+                        <span class="payment-icon"><i class="bi bi-bank text-primary"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p>&copy; 2025 CiberProto Store. Todos los derechos reservados.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p>
+                        <a href="#" class="footer-link d-inline">Términos y Condiciones</a> |
+                        <a href="#" class="footer-link d-inline">Política de Privacidad</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+

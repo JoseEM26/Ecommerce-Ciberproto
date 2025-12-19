@@ -1,0 +1,237 @@
+﻿@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Sobre Nosotros";
+}
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+        border-radius: 20px;
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+        }
+
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.1);
+        transition: 0.3s;
+        height: 100%;
+        text-align: center;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102,126,234,.2);
+        }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .stats-section {
+        background: #f8f9fa;
+        padding: 60px 0;
+        border-radius: 20px;
+        margin: 50px 0;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 1.1rem;
+        margin-top: 10px;
+    }
+
+    .timeline-section {
+        padding: 50px 0;
+    }
+
+    .timeline-item {
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,.08);
+        margin-bottom: 30px;
+        border-left: 5px solid #667eea;
+    }
+
+    .timeline-year {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <h1>Sobre CiberProto</h1>
+        <p>Innovación tecnológica al alcance de todos</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Historia -->
+    <div class="row mb-5">
+        <div class="col-lg-10 mx-auto">
+            <h2 class="text-center mb-4 fw-bold">Nuestra Historia</h2>
+            <p class="lead text-center text-muted mb-5">
+                CiberProto nació en 2020 con la visión de democratizar el acceso a la tecnología gaming y profesional.
+                Somos una tienda especializada en hardware de alto rendimiento, periféricos gaming y componentes para PC.
+            </p>
+        </div>
+    </div>
+
+    <!-- Valores -->
+    <h2 class="text-center mb-5 fw-bold">Nuestros Valores</h2>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Calidad Garantizada</h4>
+                <p class="text-muted">
+                    Trabajamos solo con las mejores marcas del mercado. Todos nuestros productos cuentan con garantía oficial.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-lightning-charge"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Envío Rápido</h4>
+                <p class="text-muted">
+                    Entregamos tus productos en tiempo récord. Despachos a nivel nacional con tracking en tiempo real.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="bi bi-headset"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Soporte 24/7</h4>
+                <p class="text-muted">
+                    Nuestro equipo de expertos está disponible para asesorarte antes, durante y después de tu compra.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">5000+</div>
+                        <div class="stat-label">Clientes Satisfechos</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Productos</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Satisfacción</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Años de Experiencia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline-section">
+        <h2 class="text-center mb-5 fw-bold">Nuestra Trayectoria</h2>
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="timeline-item">
+                    <div class="timeline-year">2020</div>
+                    <h5 class="fw-bold">Fundación</h5>
+                    <p class="text-muted mb-0">
+                        Iniciamos operaciones con una pequeña tienda física en Lima, especializándonos en periféricos gaming.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2021</div>
+                    <h5 class="fw-bold">Expansión Digital</h5>
+                    <p class="text-muted mb-0">
+                        Lanzamos nuestra plataforma e-commerce, llegando a clientes en todo el Perú.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023</div>
+                    <h5 class="fw-bold">Centro de Servicio Técnico</h5>
+                    <p class="text-muted mb-0">
+                        Abrimos nuestro centro de servicio técnico especializado en hardware gaming.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2024</div>
+                    <h5 class="fw-bold">Presente</h5>
+                    <p class="text-muted mb-0">
+                        Somos una de las tiendas tech más confiables del país, con miles de clientes satisfechos.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Final -->
+    <div class="text-center py-5">
+        <h3 class="fw-bold mb-3">¿Listo para potenciar tu setup?</h3>
+        <p class="text-muted mb-4">Explora nuestro catálogo y encuentra los mejores productos tech</p>
+        <a asp-controller="Catalogo" asp-action="Index" class="btn btn-lg btn-primary px-5">
+            Ver Catálogo <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+</div>

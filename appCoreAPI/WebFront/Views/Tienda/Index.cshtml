@@ -1,0 +1,305 @@
+﻿@model List<WebFront.Models.ProductoModel>
+@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Tienda";
+}
+
+<style>
+    @@import url('https://fonts.cdnfonts.com/css/ica-rubrik-black');
+    @@import url('https://fonts.cdnfonts.com/css/poppins');
+
+    /* ===== HERO ===== */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 100 0 L 0 0 0 100' fill='none' stroke='rgba(255,255,255,0.1)' stroke-width='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23grid)'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+    }
+
+    .hero-img {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    .btn-hero {
+        padding: 14px 36px;
+        border-radius: 50px;
+        font-weight: 600;
+        background: #fff;
+        color: #667eea;
+        transition: 0.3s;
+    }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            color: #764ba2;
+        }
+
+    /* ===== FEATURES ===== */
+    .features-section {
+        background: #f8f9fa;
+    }
+
+    .feature-card {
+        padding: 2rem;
+        border-radius: 16px;
+        transition: 0.3s;
+    }
+
+        .feature-card:hover {
+            background: #fff;
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,.1);
+        }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        border-radius: 50%;
+        color: #fff;
+        font-size: 1.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+    }
+
+    /* ===== 3D CAROUSEL ===== */
+    .banner {
+        width: 100%;
+        height: 100vh;
+        text-align: center;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+    }
+
+        .banner .slider {
+            position: absolute;
+            width: 200px;
+            height: 250px;
+            top: 10%;
+            left: calc(50% - 100px);
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            animation: autoRun 20s linear infinite;
+            z-index: 2;
+        }
+
+    @@keyframes autoRun {
+        from {
+            transform: perspective(1000px) rotateX(-16deg) rotateY(0deg);
+        }
+
+        to {
+            transform: perspective(1000px) rotateX(-16deg) rotateY(360deg);
+        }
+    }
+
+    .banner .slider .item {
+        position: absolute;
+        inset: 0 0 0 0;
+        transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(550px);
+    }
+
+        .banner .slider .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.3);
+        }
+
+    .banner .content {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(1400px, 100vw);
+        height: max-content;
+        padding-bottom: 100px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1;
+    }
+
+        .banner .content h1 {
+            font-family: 'ICA Rubrik', sans-serif;
+            font-size: 12em;
+            line-height: 1em;
+            color: #25283B;
+            position: relative;
+        }
+
+            .banner .content h1::after {
+                position: absolute;
+                inset: 0 0 0 0;
+                content: attr(data-content);
+                z-index: 2;
+                -webkit-text-stroke: 2px #d2d2d2;
+                color: transparent;
+            }
+
+        .banner .content .author {
+            font-family: 'Poppins', sans-serif;
+            text-align: right;
+            max-width: 200px;
+        }
+
+        .banner .content h2 {
+            font-size: 3em;
+        }
+
+    /* Responsive */
+    @@media screen and (max-width: 1023px) {
+        .banner .slider {
+            width: 160px;
+            height: 200px;
+            left: calc(50% - 80px);
+        }
+
+            .banner .slider .item {
+                transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(300px);
+            }
+
+        .banner .content h1 {
+            font-size: 7em;
+        }
+    }
+
+    @@media screen and (max-width: 767px) {
+        .banner .slider {
+            width: 100px;
+            height: 150px;
+            left: calc(50% - 50px);
+        }
+
+            .banner .slider .item {
+                transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(180px);
+            }
+
+        .banner .content h1 {
+            font-size: 5em;
+        }
+    }
+</style>
+
+<!-- HERO -->
+<section class="hero-section text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center hero-content">
+            <div class="col-lg-6">
+                <h1 class="hero-title">Bienvenido a <span class="text-warning">CiberProto Store</span></h1>
+                <p class="fs-5">Tecnología, gaming y accesorios premium</p>
+                <a href="#productos" class="btn btn-hero mt-3">
+                    <i class="bi bi-bag-check"></i> Explorar productos
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="/images/hero-tech.png" class="img-fluid hero-img" style="max-height:350px">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mb-3"><i class="bi bi-truck"></i></div>
+                    <h5>Envíos Rápidos</h5>
+                    <p class="text-muted">Entrega segura en todo el país</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mb-3"><i class="bi bi-shield-check"></i></div>
+                    <h5>Compra Segura</h5>
+                    <p class="text-muted">Pagos 100% protegidos</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mb-3"><i class="bi bi-headset"></i></div>
+                    <h5>Soporte 24/7</h5>
+                    <p class="text-muted">Atención personalizada</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="productos">
+    @if (!Model.Any())
+    {
+        <div class="container py-5">
+            <div class="alert alert-info text-center">
+                No hay productos disponibles por el momento
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="banner">
+
+            <!-- Título Superior -->
+            <div class="text-center pt-5 mb-4" style="position: relative; z-index: 10;">
+                <h2 class="display-4 fw-bold" style="background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Productos Destacados
+                </h2>
+                <p class="lead text-muted">Descubre nuestra selección premium</p>
+            </div>
+
+            <div class="slider" style="--quantity: @Model.Count">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var producto = Model[i];
+                    <div class="item" style="--position: @(i + 1)">
+                        <img src="@producto.ImagenUrl" alt="@producto.Nombre">
+                    </div>
+                }
+            </div>
+
+            <!-- Contenido Inferior -->
+            <div class="content">
+                <h1 data-content="GAMING">GAMING</h1>
+                <div class="author">
+                    <h2>TECH</h2>
+                    <p><b>CiberProto</b></p>
+                    <p>La mejor tecnología a tu alcance</p>
+                    <a asp-controller="Catalogo" asp-action="Index" class="btn btn-primary mt-3" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 25px; padding: 12px 30px;">
+                        Ver Todo <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</section>

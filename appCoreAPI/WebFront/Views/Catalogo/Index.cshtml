@@ -1,0 +1,219 @@
+﻿@{
+    Layout = "_LayoutCliente";
+}
+@model List<ProductoModel>
+
+@{
+    // Obtener el carrito de la sesión para saber qué productos ya están agregados
+    var carritoJson = Context.Session.GetString("CARRITO");
+    var carrito = string.IsNullOrEmpty(carritoJson)
+        ? new List<CarritoModel>()
+        : System.Text.Json.JsonSerializer.Deserialize<List<CarritoModel>>(carritoJson);
+}
+
+<style>
+    .product-card {
+        border-radius: 18px;
+        border: none;
+        overflow: hidden;
+        transition: 0.4s;
+        box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(102,126,234,.25);
+        }
+
+    .product-img-container {
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f7fa;
+        padding: 20px;
+    }
+
+    .product-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: 0.4s;
+    }
+
+    .product-card:hover .product-img {
+        transform: scale(1.1);
+    }
+
+    .product-price {
+        font-size: 1.7rem;
+        font-weight: 800;
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    } 
+
+    .btn-add-cart {
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .filter-section {
+        background: #fff;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.08);
+        margin-bottom: 30px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+</style>
+
+<h2 class="mb-4">Catálogo de Productos</h2>
+
+<!-- Sección de Filtros -->
+<div class="filter-section">
+    <form method="get" asp-controller="Catalogo" asp-action="Index" id="filterForm">
+        <div class="row align-items-end">
+            <!-- Filtro de Categoría -->
+            <div class="col-md-5 mb-3 mb-md-0">
+                <label class="filter-label">
+                    <i class="bi bi-tag-fill"></i> Categoría
+                </label>
+                <select name="idCategoria" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                    <option value="">Todas las categorías</option>
+                    @foreach (var cat in (List<CategoriaModel>)ViewBag.Categorias)
+                    {
+                        <option value="@cat.IdCategoria"
+                                selected="@(ViewBag.CategoriaSeleccionada == cat.IdCategoria)">
+                            @cat.Descripcion
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Filtro de Marca -->
+            <div class="col-md-5 mb-3 mb-md-0">
+                <label class="filter-label">
+                    <i class="bi bi-award-fill"></i> Marca
+                </label>
+                <select name="idMarca" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                    <option value="">Todas las marcas</option>
+                    @foreach (var marca in (List<MarcaModel>)ViewBag.Marcas)
+                    {
+                        <option value="@marca.IdMarca"
+                                selected="@(ViewBag.MarcaSeleccionada == marca.IdMarca)">
+                            @marca.Descripcion
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <!-- Botón Limpiar Filtros -->
+            <div class="col-md-2">
+                <a asp-controller="Catalogo" asp-action="Index" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Contador de Resultados -->
+<div class="mb-4">
+    <p class="text-muted">
+        @if (Model.Count > 0)
+        {
+            <span><i class="bi bi-check-circle-fill text-success"></i> Mostrando <strong>@Model.Count</strong> producto(s)</span>
+        }
+        else
+        {
+            <span><i class="bi bi-info-circle-fill text-warning"></i> No se encontraron productos con los filtros seleccionados</span>
+        }
+    </p>
+</div>
+
+<!-- Grid de Productos -->
+<div class="row g-4">
+    @foreach (var p in Model)
+    {
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="card product-card h-100">
+                <div class="product-img-container">
+                    <img src="@p.UrlImagen" class="product-img" alt="@p.Nombre">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h6 class="fw-bold mb-2">@p.Nombre</h6>
+                    <p class="text-muted small mb-1">
+                        <i class="bi bi-award"></i> @p.NombreMarca
+                    </p>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-tag"></i> @p.NombreCategoria
+                    </p>
+                    <h5 class="text-primary mb-3">S/ @p.Precio</h5>
+
+                    @{
+                        var itemEnCarrito = carrito?.FirstOrDefault(c => c.IdProducto == p.IdProducto);
+                    }
+                    
+                    @if (itemEnCarrito != null)
+                    {
+                        <!-- Producto YA está en el carrito - Mostrar controles de cantidad -->
+                        <div class="quantity-controls">
+                            <a asp-controller="Carrito"
+                               asp-action="ActualizarCantidad"
+                               asp-route-idProducto="@p.IdProducto"
+                               asp-route-cambio="-1"
+                               asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                               class="btn-quantity">
+                                <i class="bi bi-dash"></i>
+                            </a>
+                            
+                            <span class="quantity-display">@itemEnCarrito.Cantidad</span>
+                            
+                            <a asp-controller="Carrito"
+                               asp-action="ActualizarCantidad"
+                               asp-route-idProducto="@p.IdProducto"
+                               asp-route-cambio="1"
+                               asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                               class="btn-quantity">
+                                <i class="bi bi-plus"></i>
+                            </a>
+                        </div>
+                        }
+                        else {
+                    <a asp-controller="Carrito"
+                       asp-action="Agregar"
+                       asp-route-idProducto="@p.IdProducto"
+                       asp-route-nombre="@p.Nombre"
+                       asp-route-precio="@p.Precio"
+                       asp-route-stock="@p.Stock"
+                       asp-route-imagen="@p.UrlImagen"
+                       asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                       class="btn btn-add-cart w-100 mt-auto">
+                        <i class="bi bi-cart-plus"></i> Agregar
+                    </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Mensaje cuando no hay productos -->
+@if (Model.Count == 0)
+{
+    <div class="text-center py-5">
+        <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+        <p class="text-muted mt-3 fs-5">No hay productos disponibles con estos filtros</p>
+        <a asp-controller="Catalogo" asp-action="Index" class="btn btn-primary mt-3">
+            <i class="bi bi-arrow-clockwise"></i> Ver todos los productos
+        </a>
+    </div>
+}
