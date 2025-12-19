@@ -47,8 +47,6 @@ namespace WebFront.Controllers
         }
 
 
-        //==================CRUD=========================
-
         public async Task<ActionResult> Create()
         {
             return View();
@@ -72,7 +70,6 @@ namespace WebFront.Controllers
             ViewBag.mensaje = mensaje;
             return View(await Task.Run(() => reg));
         }
-
 
 
         public async Task<ActionResult> Edit(string id)
@@ -110,8 +107,6 @@ namespace WebFront.Controllers
             return View(await Task.Run(() => reg));
         }
 
-        //==================================================
-        // GET: Usuario/Login
         public IActionResult Login()
         {
             return View();
@@ -130,7 +125,6 @@ namespace WebFront.Controllers
             {
                 client.BaseAddress = new Uri(ApiServicio);
 
-                // Enviamos los parámetros a tu endpoint: api/Usuario/login?correo=...&clave=...
                 HttpResponseMessage response = await client.PostAsync($"login?correo={correo}&clave={clave}", null);
 
                 if (response.IsSuccessStatusCode)
