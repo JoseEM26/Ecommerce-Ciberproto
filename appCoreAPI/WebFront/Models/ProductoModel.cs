@@ -33,6 +33,11 @@ namespace WebFront.Models
 
         public string? NombreMarca { get; set; }
         public string? NombreCategoria { get; set; }
+
+        public bool TieneStock => Stock > 0;
+        public string ImagenUrl => string.IsNullOrEmpty(UrlImagen)
+            ? "/images/no-image.png"
+            : UrlImagen;
     }
 
     public class MarcaCombo { public int IdMarca { get; set; } public string Descripcion { get; set; } }

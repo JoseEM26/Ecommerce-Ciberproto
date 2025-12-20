@@ -1,0 +1,115 @@
+﻿@model List<WebFront.Models.CarritoModel>
+
+@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Confirmar Compra";
+    var total = Model.Sum(x => x.Subtotal);
+}
+
+<style>
+    .checkout-card {
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0,0,0,.1);
+    }
+
+    .checkout-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        border-radius: 18px 18px 0 0;
+        padding: 1.5rem;
+    }
+
+    .checkout-product {
+        border-bottom: 1px solid #eee;
+        padding: 1rem 0;
+    }
+
+        .checkout-product:last-child {
+            border-bottom: none;
+        }
+
+    .checkout-total {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #5a67d8;
+    }
+
+    .secure-box {
+        background: #f8f9fa;
+        border-radius: 14px;
+        padding: 1rem;
+        font-size: .9rem;
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card checkout-card">
+
+                <!-- HEADER -->
+                <div class="checkout-header">
+                    <h3 class="mb-1">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        Confirmar Compra
+                    </h3>
+                    <small>Revisa tu pedido antes de finalizar</small>
+                </div>
+
+                <!-- BODY -->
+                <div class="card-body">
+
+                    <!-- PRODUCTOS -->
+                    @foreach (var item in Model)
+                    {
+                        <div class="checkout-product d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@item.NombreProducto</strong><br />
+                                <small class="text-muted">
+                                    Cantidad: @item.Cantidad
+                                </small>
+                            </div>
+
+                            <div class="fw-bold">
+                                S/ @item.Subtotal
+                            </div>
+                        </div>
+                    }
+
+                    <!-- TOTAL -->
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <h5 class="mb-0">Total a pagar</h5>
+                        <div class="checkout-total">
+                            S/ @total
+                        </div>
+                    </div>
+
+                    <!-- SEGURIDAD -->
+                    <div class="secure-box mt-4">
+                        <i class="bi bi-lock-fill me-2"></i>
+                        Pago seguro. Tus datos están protegidos.
+                    </div>
+
+                    <!-- ACCIONES -->
+                    <form asp-action="Confirmar" method="post" class="mt-4">
+                        <button class="btn btn-success btn-lg w-100 fw-bold">
+                            <i class="bi bi-bag-check me-2"></i>
+                            Confirmar Compra
+                        </button>
+                    </form>
+
+                    <a asp-controller="Carrito"
+                       asp-action="Index"
+                       class="btn btn-link w-100 mt-3">
+                        ← Volver al carrito
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
