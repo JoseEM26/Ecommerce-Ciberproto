@@ -8,27 +8,28 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - WebFront</title>
+    <title>Login Tienda - CiberProto</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
-            background-color: #f4f7f6;
+            background-color: #212529;
             height: 100vh;
             display: flex;
             align-items: center;
         }
-
+        /* Fondo oscuro como el navbar */
         .login-card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         .btn-login {
             border-radius: 10px;
             padding: 12px;
             font-weight: bold;
+            background-color: #0d6efd;
         }
     </style>
 </head>
@@ -36,10 +37,9 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-5 col-lg-4">
-                <div class="text-center mb-4">
-                    <i class="bi bi-shield-lock-fill text-primary" style="font-size: 3rem;"></i>
-                    <h2 class="fw-bold">Bienvenido</h2>
-                    <p class="text-muted">Inicia sesión para acceder al panel</p>
+                <div class="text-center mb-4 text-white">
+                    <i class="bi bi-cart-check-fill text-info" style="font-size: 3rem;"></i> <h2 class="fw-bold">Tienda CiberProto</h2>
+                    <p class="text-muted">Inicia sesión para realizar tus compras</p>
                 </div>
 
                 <div class="card login-card">
@@ -52,11 +52,13 @@
                         }
 
                         <form asp-action="Login" method="post">
+                            <input type="hidden" name="origen" value="TIENDA" />
+
                             <div class="mb-3">
-                                <label class="form-label small fw-bold">CORREO ELECTRÓNICO</label>
+                                <label class="form-label small fw-bold">CORREO DEL CLIENTE</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope"></i></span>
-                                    <input type="email" name="correo" class="form-control border-start-0 bg-light" placeholder="correo@ejemplo.com" required />
+                                    <input type="email" name="correo" class="form-control border-start-0 bg-light" placeholder="tu-correo@ejemplo.com" required />
                                 </div>
                             </div>
 
@@ -69,15 +71,12 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-login shadow-sm">
-                                    Ingresar al Sistema
+                                <button type="submit" class="btn btn-info btn-login text-white shadow-sm">
+                                    Ingresar a la Tienda
                                 </button>
                             </div>
                         </form>
                     </div>
-                </div>
-                <div class="text-center mt-4">
-                    <p class="text-muted small">&copy; 2025 CiberProt - Todos los derechos reservados</p>
                 </div>
             </div>
         </div>

@@ -1,11 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Agregar servicios al contenedor.
+
 builder.Services.AddControllersWithViews();
 
-// IMPRESCINDIBLE: Configurar la Sesión (porque la usas en tu Login)
+
 builder.Services.AddSession(options => {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // La sesión dura 30 minutos
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -30,7 +30,7 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Usuario}/{action=Login}/{id?}");
+    pattern: "{controller=UsuarioLogin}/{action=Login}/{id?}");
 
 
 
