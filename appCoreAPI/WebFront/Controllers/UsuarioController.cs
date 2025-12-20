@@ -108,5 +108,37 @@ namespace WebFront.Controllers
         }
 
 
+        public IActionResult RegistroCliente()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegistroCliente(UsuarioModel reg)
+        {
+            reg.Rol = "CLIENTE";
+            reg.Activo = true;
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ApiServicio);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(reg),
+                                        Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PostAsync("registrarUsuario", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["MensajeExito"] = "Cuenta creada con éxito. Ya puedes iniciar sesión.";
+                    return RedirectToAction("LoginCliente","UsuarioLogin");
+                }
+                else
+                {
+                    ViewBag.mensaje = "Hubo un error al crear la cuenta. Intente con otro correo.";
+                    return View(reg);
+                }
+            }
+        }
+
     }
 }

@@ -70,11 +70,21 @@
                                 </div>
                             </div>
 
-                            <div class="d-grid">
+                            <div class="d-grid mb-3">
                                 <button type="submit" class="btn btn-info btn-login text-white shadow-sm">
-                                    Ingresar a la Tienda
+                                    Ingresar
                                 </button>
                             </div>
+                            <div class="text-center">
+                                <p class="text-muted small">
+                                    ¿No tienes una cuenta?
+                                    <a asp-action="RegistroCliente" asp-controller="Usuario" class="text-info fw-bold text-decoration-none">Regístrate aquí</a>
+                                </p>
+                            </div>
+
+                            <a asp-action="Index" asp-controller="Tienda" class="text-muted small text-decoration-none d-block mt-2">
+                                <i class="bi bi-arrow-left me-1"></i> Volver a la Tienda
+                            </a>
                         </form>
                     </div>
                 </div>

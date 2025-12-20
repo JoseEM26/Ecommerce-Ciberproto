@@ -101,7 +101,7 @@
                                 <td class="ps-4 fw-bold text-muted">#@item.IdVenta</td>
                                 <td>
                                     <i class="bi bi-calendar3 me-1 text-muted"></i>
-                                    @item.Fecha.Substring(0, 10)
+                                    @(DateTime.TryParse(item.Fecha, out DateTime d) ? d.ToString("dd/MM/yyyy") : item.Fecha)
                                 </td>
                                 <td>
                                     <div class="fw-bold text-dark">@item.Cliente</div>
