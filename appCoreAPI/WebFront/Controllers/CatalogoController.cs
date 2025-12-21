@@ -1,151 +1,131 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebFront.Models;
+using System.Text.Json;
 
 namespace WebFront.Controllers
 {
     public class CatalogoController : Controller
     {
-        public IActionResult Index(int? idCategoria, int? idMarca)
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+
+        public CatalogoController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+        }
 
-            var categorias = new List<CategoriaModel>
-            {
-                new CategoriaModel { IdCategoria = 1, Descripcion = "Laptops", Activo = true },
-                new CategoriaModel { IdCategoria = 2, Descripcion = "Periféricos", Activo = true },
-                new CategoriaModel { IdCategoria = 3, Descripcion = "Componentes", Activo = true },
-                new CategoriaModel { IdCategoria = 4, Descripcion = "Audio", Activo = true }
-            };
+        public async Task<IActionResult> Index(int? idCategoria, int? idMarca, int page = 1)
+        {
+            const int pageSize = 12;
 
-            // Datos mock de marcas
-            var marcas = new List<MarcaModel>
-            {
-                new MarcaModel { IdMarca = 1, Descripcion = "Logitech", Activo = true },
-                new MarcaModel { IdMarca = 2, Descripcion = "Razer", Activo = true },
-                new MarcaModel { IdMarca = 3, Descripcion = "ASUS", Activo = true },
-                new MarcaModel { IdMarca = 4, Descripcion = "HyperX", Activo = true },
-                new MarcaModel { IdMarca = 5, Descripcion = "Corsair", Activo = true }
-            };
+            var productos = new List<ProductoModel>();
+            var categorias = new List<CategoriaModel>();
+            var marcas = new List<MarcaModel>();
+            var carrito = new List<CarritoModel>();
 
-            // por ahora mock o datos que ya consumes
-            var productos = new List<ProductoModel>
+
+
+            try
             {
-                new ProductoModel
+                var client = _httpClientFactory.CreateClient("ApiClient");
+                var idUsuario = HttpContext.Session.GetInt32("UsuarioID");
+
+                if (idUsuario.HasValue)
                 {
-                    IdProducto = 1,
-                    Nombre = "Laptop Gamer ROG",
-                    Precio = 3500,
-                    Stock = 10,
-                    UrlImagen = "/img/laptop.png",
-                    IdCategoria = 1,
-                    IdMarca = 3,
-                    NombreCategoria = "Laptops",
-                    NombreMarca = "ASUS"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 2,
-                    Nombre = "Mouse Gamer G502",
-                    Precio = 150,
-                    Stock = 25,
-                    UrlImagen = "/img/mouse.png",
-                    IdCategoria = 2,
-                    IdMarca = 1,
-                    NombreCategoria = "Periféricos",
-                    NombreMarca = "Logitech"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 3,
-                    Nombre = "Mouse Razer DeathAdder",
-                    Precio = 180,
-                    Stock = 15,
-                    UrlImagen = "/img/mouse.png",
-                    IdCategoria = 2,
-                    IdMarca = 2,
-                    NombreCategoria = "Periféricos",
-                    NombreMarca = "Razer"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 4,
-                    Nombre = "Teclado Mecánico K70",
-                    Precio = 250,
-                    Stock = 20,
-                    UrlImagen = "/img/keyboard.png",
-                    IdCategoria = 2,
-                    IdMarca = 5,
-                    NombreCategoria = "Periféricos",
-                    NombreMarca = "Corsair"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 5,
-                    Nombre = "Audífonos Cloud II",
-                    Precio = 200,
-                    Stock = 30,
-                    UrlImagen = "/img/headset.png",
-                    IdCategoria = 4,
-                    IdMarca = 4,
-                    NombreCategoria = "Audio",
-                    NombreMarca = "HyperX"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 6,
-                    Nombre = "Laptop TUF Gaming",
-                    Precio = 2800,
-                    Stock = 8,
-                    UrlImagen = "/img/laptop.png",
-                    IdCategoria = 1,
-                    IdMarca = 3,
-                    NombreCategoria = "Laptops",
-                    NombreMarca = "ASUS"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 7,
-                    Nombre = "Tarjeta Gráfica RTX 4070",
-                    Precio = 1500,
-                    Stock = 5,
-                    UrlImagen = "/img/gpu.png",
-                    IdCategoria = 3,
-                    IdMarca = 3,
-                    NombreCategoria = "Componentes",
-                    NombreMarca = "ASUS"
-                },
-                new ProductoModel
-                {
-                    IdProducto = 8,
-                    Nombre = "Mouse Inalámbrico G305",
-                    Precio = 120,
-                    Stock = 40,
-                    UrlImagen = "/img/mouse.png",
-                    IdCategoria = 2,
-                    IdMarca = 1,
-                    NombreCategoria = "Periféricos",
-                    NombreMarca = "Logitech"
+                    var carritoResponse = await client.GetAsync($"api/Carrito/ListarPorUsuario/{idUsuario}");
+                    if (carritoResponse.IsSuccessStatusCode)
+                    {
+                        var content = await carritoResponse.Content.ReadAsStringAsync();
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true,
+                            PropertyNamingPolicy = null
+                        };
+                        carrito = JsonSerializer.Deserialize<List<CarritoModel>>(content, options) ?? new List<CarritoModel>();
+                    }
                 }
-            };
 
-            var productosFiltrados = productos.AsQueryable();
+                var productosResponse = await client.GetAsync("api/Producto/Listar");
+                if (productosResponse.IsSuccessStatusCode)
+                {
+                    var content = await productosResponse.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        PropertyNamingPolicy = null
+                    };
+                    productos = JsonSerializer.Deserialize<List<ProductoModel>>(content, options) ?? new List<ProductoModel>();
 
-            if (idCategoria.HasValue)
+                    // Filtrar solo activos
+                    productos = productos.Where(p => p.Activo).ToList();
+                }
+                else
+                {
+                    ViewBag.Error = $"Error API: {productosResponse.StatusCode}";
+                }
+
+                // Obtener categorías
+                var categoriasResponse = await client.GetAsync("api/Categoria/Listar");
+                if (categoriasResponse.IsSuccessStatusCode)
+                {
+                    var content = await categoriasResponse.Content.ReadAsStringAsync();
+                    categorias = JsonSerializer.Deserialize<List<CategoriaModel>>(content, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }) ?? new List<CategoriaModel>();
+
+                    categorias = categorias.Where(c => c.Activo).ToList();
+                }
+
+                // Obtener marcas
+                var marcasResponse = await client.GetAsync("api/Marca/Listar");
+                if (marcasResponse.IsSuccessStatusCode)
+                {
+                    var content = await marcasResponse.Content.ReadAsStringAsync();
+                    marcas = JsonSerializer.Deserialize<List<MarcaModel>>(content, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    }) ?? new List<MarcaModel>();
+
+                    marcas = marcas.Where(m => m.Activo).ToList();
+                }
+
+                // Aplicar filtros
+                if (idCategoria.HasValue)
+                {
+                    productos = productos.Where(p => p.IdCategoria == idCategoria.Value).ToList();
+                }
+
+                if (idMarca.HasValue)
+                {
+                    productos = productos.Where(p => p.IdMarca == idMarca.Value).ToList();
+                }
+            }
+            catch (Exception ex)
             {
-                productosFiltrados = productosFiltrados.Where(p => p.IdCategoria == idCategoria.Value);
+                // Log del error
+                ViewBag.Error = "Error al cargar los datos";
             }
 
-            if (idMarca.HasValue)
-            {
-                productosFiltrados = productosFiltrados.Where(p => p.IdMarca == idMarca.Value);
-            }
+            int totalProductos = productos.Count;
+            int totalPaginas = (int)Math.Ceiling(totalProductos / (double)pageSize);
+
+            ViewBag.PaginaActual = page;
+            ViewBag.TotalPaginas = totalPaginas;
+
+            productos = productos
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
             // Pasar datos a la vista
             ViewBag.Categorias = categorias;
             ViewBag.Marcas = marcas;
             ViewBag.CategoriaSeleccionada = idCategoria;
             ViewBag.MarcaSeleccionada = idMarca;
-
-            return View(productosFiltrados.ToList());
+            ViewBag.Carrito = carrito;
+            return View(productos);
         }
     }
 }

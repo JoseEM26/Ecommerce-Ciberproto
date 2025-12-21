@@ -54,7 +54,9 @@
 
                         <span class="position-absolute top-0 start-100 translate-middle
                                      badge rounded-pill bg-danger">
-                            @Context.Session.GetInt32("CarritoCantidad") ? 0
+                            @*  @Context.Session.GetInt32("CarritoCantidad") ? 0 *@
+                            @(Context.Session.GetInt32("CarritoCantidad") ?? 0)
+                            
                         </span>
                     </a>
                 </li>

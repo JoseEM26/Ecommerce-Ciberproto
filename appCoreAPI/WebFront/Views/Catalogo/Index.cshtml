@@ -4,11 +4,7 @@
 @model List<ProductoModel>
 
 @{
-    // Obtener el carrito de la sesión para saber qué productos ya están agregados
-    var carritoJson = Context.Session.GetString("CARRITO");
-    var carrito = string.IsNullOrEmpty(carritoJson)
-        ? new List<CarritoModel>()
-        : System.Text.Json.JsonSerializer.Deserialize<List<CarritoModel>>(carritoJson);
+    var carrito = (List<CarritoModel>)ViewBag.Carrito ?? new List<CarritoModel>();
 }
 
 <style>
@@ -51,7 +47,7 @@
         background: linear-gradient(135deg,#667eea,#764ba2);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-    } 
+    }
 
     .btn-add-cart {
         background: linear-gradient(135deg,#667eea,#764ba2);
@@ -158,10 +154,12 @@
                     </p>
                     <h5 class="text-primary mb-3">S/ @p.Precio</h5>
 
+                    
+
                     @{
                         var itemEnCarrito = carrito?.FirstOrDefault(c => c.IdProducto == p.IdProducto);
                     }
-                    
+
                     @if (itemEnCarrito != null)
                     {
                         <!-- Producto YA está en el carrito - Mostrar controles de cantidad -->
@@ -169,42 +167,90 @@
                             <a asp-controller="Carrito"
                                asp-action="ActualizarCantidad"
                                asp-route-idProducto="@p.IdProducto"
+                               asp-route-nombre="@p.Nombre"
                                asp-route-cambio="-1"
                                asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
                                class="btn-quantity">
                                 <i class="bi bi-dash"></i>
                             </a>
-                            
+
                             <span class="quantity-display">@itemEnCarrito.Cantidad</span>
-                            
+
                             <a asp-controller="Carrito"
                                asp-action="ActualizarCantidad"
                                asp-route-idProducto="@p.IdProducto"
+                               asp-route-nombre="@p.Nombre"
                                asp-route-cambio="1"
                                asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
                                class="btn-quantity">
                                 <i class="bi bi-plus"></i>
                             </a>
                         </div>
-                        }
-                        else {
-                    <a asp-controller="Carrito"
-                       asp-action="Agregar"
-                       asp-route-idProducto="@p.IdProducto"
-                       asp-route-nombre="@p.Nombre"
-                       asp-route-precio="@p.Precio"
-                       asp-route-stock="@p.Stock"
-                       asp-route-imagen="@p.UrlImagen"
-                       asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
-                       class="btn btn-add-cart w-100 mt-auto">
-                        <i class="bi bi-cart-plus"></i> Agregar
-                    </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Carrito"
+                           asp-action="Agregar"
+                           asp-route-idProducto="@p.IdProducto"
+                           asp-route-nombre="@p.Nombre"
+                           asp-route-precio="@p.Precio"
+                           asp-route-stock="@p.Stock"
+                           asp-route-imagen="@p.UrlImagen"
+                           asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                           class="btn btn-add-cart w-100 mt-auto">
+                            <i class="bi bi-cart-plus"></i> Agregar
+                        </a>
                     }
                 </div>
             </div>
         </div>
     }
 </div>
+
+@if (ViewBag.TotalPaginas > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            <!-- Anterior -->
+            <li class="page-item @(ViewBag.PaginaActual == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(ViewBag.PaginaActual - 1)"
+                   asp-route-idCategoria="@ViewBag.CategoriaSeleccionada"
+                   asp-route-idMarca="@ViewBag.MarcaSeleccionada">
+                    Anterior
+                </a>
+            </li>
+
+            <!-- Números -->
+            @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
+            {
+                <li class="page-item @(i == ViewBag.PaginaActual ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-idCategoria="@ViewBag.CategoriaSeleccionada"
+                       asp-route-idMarca="@ViewBag.MarcaSeleccionada">
+                        @i
+                    </a>
+                </li>
+            }
+
+            <!-- Siguiente -->
+            <li class="page-item @(ViewBag.PaginaActual == ViewBag.TotalPaginas ? "disabled" : "")">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-page="@(ViewBag.PaginaActual + 1)"
+                   asp-route-idCategoria="@ViewBag.CategoriaSeleccionada"
+                   asp-route-idMarca="@ViewBag.MarcaSeleccionada">
+                    Siguiente
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+}
 
 <!-- Mensaje cuando no hay productos -->
 @if (Model.Count == 0)
@@ -216,4 +262,9 @@
             <i class="bi bi-arrow-clockwise"></i> Ver todos los productos
         </a>
     </div>
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
 }
