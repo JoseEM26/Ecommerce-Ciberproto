@@ -99,7 +99,7 @@ CREATE TABLE tb_venta (
  Telefono VARCHAR(20) NOT NULL,
  Direccion VARCHAR(MAX) NOT NULL,
  IdTransaccion VARCHAR(100),
- FechaVenta DATETIME DEFAULT GETDATE()
+ FechaVenta DATE DEFAULT GETDATE()
 );
 
 CREATE TABLE tb_detalle_venta (

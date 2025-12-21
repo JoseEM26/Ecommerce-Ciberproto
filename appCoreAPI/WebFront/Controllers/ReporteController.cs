@@ -162,15 +162,13 @@ namespace WebFront.Controllers
             var canal = GrpcChannel.ForAddress(grpcUrl);
             var client = new ServicioProductos.ServicioProductosClient(canal);
 
-            // Usamos la clase generada por el proto "Empty" o "EmptyProducto" 
-            // (Revisa cómo se llama en tu productos.proto, usualmente es Empty)
+            
             var respuesta = await client.GetAllAsync(new GrpcService1.Empty());
 
             List<ProductoModel> lista = new List<ProductoModel>();
 
             if (respuesta != null && respuesta.Items != null)
             {
-                // Mapeamos de gRPC a nuestro Modelo
                 foreach (var item in respuesta.Items)
                 {
                     lista.Add(new ProductoModel
@@ -181,13 +179,10 @@ namespace WebFront.Controllers
                         NombreCategoria = item.Categoria,
                         Precio = decimal.Parse(item.Precio),
                         Stock = item.Stock,
-                        // Si agregaste Activo al proto, úsalo, si no, asume true
-                        // Activo = item.Activo == "1" 
                     });
                 }
             }
 
-            // Filtro simple en memoria (opcional)
             if (!string.IsNullOrEmpty(busqueda))
             {
                 lista = lista.Where(p => p.Nombre.ToLower().Contains(busqueda.ToLower()) ||

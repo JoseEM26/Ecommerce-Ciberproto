@@ -107,76 +107,38 @@ namespace WebFront.Controllers
             return View(await Task.Run(() => reg));
         }
 
-        public IActionResult Login()
+
+        public IActionResult RegistroCliente()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string correo, string clave)
+        public async Task<IActionResult> RegistroCliente(UsuarioModel reg)
         {
-            if (string.IsNullOrEmpty(correo) || string.IsNullOrEmpty(clave))
-            {
-                ViewBag.mensaje = "Ingrese sus credenciales";
-                return View();
-            }
+            reg.Rol = "CLIENTE";
+            reg.Activo = true;
 
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiServicio);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(reg),
+                                        Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync($"login?correo={correo}&clave={clave}", null);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    var usuario = JsonConvert.DeserializeObject<UsuarioModel>(apiResponse);
-
-                    if (usuario != null && usuario.Rol == "ADMIN")
-                    {
-                        HttpContext.Session.SetString("UsuarioNombre", usuario.Nombres );
-                        HttpContext.Session.SetString("UsuarioRol", usuario.Rol);
-                        HttpContext.Session.SetInt32("UsuarioID", usuario.IdUsuario);
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-            }
-
-            ViewBag.mensaje = "Correo o clave incorrectos";
-            return View();
-        }
-
-        public async Task<IActionResult> Perfil()
-        {
-            int? userId = HttpContext.Session.GetInt32("UsuarioID");
-
-            if (userId == null) return RedirectToAction("Login", "Usuario");
-
-            UsuarioModel usuario = new UsuarioModel();
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(ApiServicio);
-
-                HttpResponseMessage response = await client.GetAsync("getUsuarioById/" + userId);
+                HttpResponseMessage response = await client.PostAsync("registrarUsuario", content);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string json = await response.Content.ReadAsStringAsync();
-                    usuario = JsonConvert.DeserializeObject<UsuarioModel>(json);
+                    TempData["MensajeExito"] = "Cuenta creada con éxito. Ya puedes iniciar sesión.";
+                    return RedirectToAction("LoginCliente","UsuarioLogin");
+                }
+                else
+                {
+                    ViewBag.mensaje = "Hubo un error al crear la cuenta. Intente con otro correo.";
+                    return View(reg);
                 }
             }
-
-            return View(usuario);
         }
-
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
-        }
-
 
     }
 }
