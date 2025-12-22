@@ -113,17 +113,17 @@
 
                                         @if (item.Activo)
                                         {
-                                            <a asp-action="Delete" asp-route-id="@item.IdProducto" class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('¿Deseas desactivar este producto?');" title="Desactivar">
+                                            <button type="button" class="btn btn-sm btn-outline-danger" title="Desactivar"
+                                                    onclick="confirmarAccion('/Producto/Delete/@item.IdProducto', '¿Deseas desactivar este producto?', 'warning', 'Sí, desactivar')">
                                                 <i class="bi bi-trash"></i>
-                                            </a>
+                                            </button>
                                         }
                                         else
                                         {
-                                            <a asp-action="Activar" asp-route-id="@item.IdProducto" class="btn btn-sm btn-outline-success"
-                                               onclick="return confirm('¿Restaurar este producto al catálogo?');" title="Restaurar / Activar">
+                                            <button type="button" class="btn btn-sm btn-outline-success" title="Restaurar / Activar"
+                                                    onclick="confirmarAccion('/Producto/Activar/@item.IdProducto', '¿Restaurar este producto al catálogo?', 'info', 'Sí, activar')">
                                                 <i class="bi bi-arrow-counterclockwise"></i>
-                                            </a>
+                                            </button>
                                         }
                                     </div>
                                 </td>
@@ -192,4 +192,47 @@
             pagina
         });
     }
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // 1. Función para confirmaciones (Desactivar/Activar)
+        function confirmarAccion(url, titulo, icono, textoBoton) {
+            Swal.fire({
+                title: titulo,
+                icon: icono,
+                showCancelButton: true,
+                confirmButtonColor: icono === 'warning' ? '#dc3545' : '#198754',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: textoBoton,
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+
+        // 2. Listener para mensajes de éxito desde el Controlador
+        document.addEventListener("DOMContentLoaded", function () {
+            // Verificamos si hay un mensaje en TempData (vía JSON)
+            var messageData = '@TempData["SweetAlert"]';
+
+            if (messageData) {
+                // Decodificamos el JSON (manejando comillas de HTML)
+                var data = JSON.parse(messageData.replace(/&quot;/g, '"'));
+
+                Swal.fire({
+                    icon: data.icon,
+                    title: data.title,
+                    text: data.text,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    </script>
 }

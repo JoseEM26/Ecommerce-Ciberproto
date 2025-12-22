@@ -21,7 +21,7 @@ namespace WebFront.Controllers
             var idUsuario = HttpContext.Session.GetInt32("UsuarioID");
             if (idUsuario == null)
             {
-                return RedirectToAction("Login", "Usuario");
+                return RedirectToAction("LoginCliente", "UsuarioLogin");
             }
 
             var carrito = new List<CarritoModel>();

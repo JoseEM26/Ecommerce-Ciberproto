@@ -39,7 +39,7 @@ namespace appCoreAPI.Controllers
             var mensaje = await Task.Run(() => new usuarioDAO().ActualizarUsuario(usuario));
             return Ok(mensaje);
         }
-        [HttpDelete("EliminarUsuario")]
+        [HttpDelete("EliminarUsuario/{id}")]
         public async Task<ActionResult<string>> EliminarUsuario(int id)
         {
             var mensaje = await Task.Run(() => new usuarioDAO().EliminarUsuario(id));

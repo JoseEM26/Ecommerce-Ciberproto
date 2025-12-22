@@ -84,10 +84,17 @@ namespace WebFront.Controllers
                     var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
                     var response = await api.PostAsync("Producto/Guardar", content);
 
-                    if (response.IsSuccessStatusCode) return RedirectToAction("Index");
-                    else ViewBag.Mensaje = "Error al conectar con la API";
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlert"] = JsonConvert.SerializeObject(new { 
+                            icon = "success", 
+                            title = "¡Creado!", 
+                            text = "Producto registrado correctamente." });
+                        return RedirectToAction("Index");
+                    }
                 }
             }
+            ViewBag.Mensaje = "Error al conectar con la API";
             await CargarCombos();
             return View(model);
         }
@@ -126,14 +133,16 @@ namespace WebFront.Controllers
                     api.BaseAddress = new Uri(apiUrl);
                     var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
-                    // PUT a la API
                     var response = await api.PutAsync("Producto/Editar", content);
 
-                    if (response.IsSuccessStatusCode) return RedirectToAction("Index");
-                    else ViewBag.Mensaje = "No se pudo actualizar el producto.";
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SweetAlert"] = JsonConvert.SerializeObject(new { icon = "success", title = "¡Actualizado!", text = "El producto se modificó con éxito." });
+                        return RedirectToAction("Index");
+                    }
                 }
             }
-            await CargarCombos();
+            TempData["SweetAlert"] = JsonConvert.SerializeObject(new { icon = "error", title = "Error", text = "No se pudo actualizar." }); await CargarCombos();
             return View(model);
         }
 
