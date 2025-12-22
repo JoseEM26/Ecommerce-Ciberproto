@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Gestión de Usuarios";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -129,3 +132,44 @@
         </tbody>
     </table>
 </div>
+
+
+@if (totalPaginas > 1)
+{
+    <div class="card-footer bg-light border-top">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted small">
+                Mostrando @((paginaActual - 1) * 10 + 1) - @Math.Min(paginaActual * 10, totalRegistros) de @totalRegistros productos
+            </div>
+
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    @if (paginaActual > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("ListarUsuarios", new { busqueda = ViewBag.Busqueda, pagina = paginaActual - 1 })">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    }
+
+                    @for (int i = Math.Max(1, paginaActual - 2); i <= Math.Min(totalPaginas, paginaActual + 2); i++)
+                    {
+                        <li class="page-item @(i == paginaActual ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("ListarUsuarios", new { busqueda = ViewBag.Busqueda, pagina = i })">@i</a>
+                        </li>
+                    }
+
+                    @if (paginaActual < totalPaginas)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("ListarUsuarios", new { busqueda = ViewBag.Busqueda, pagina = paginaActual + 1 })">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+}

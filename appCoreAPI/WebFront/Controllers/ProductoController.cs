@@ -11,8 +11,9 @@ namespace WebFront.Controllers
     public class ProductoController : Controller
     {
         private readonly string apiUrl = "https://localhost:7236/api/";
+        private int PageSize = 10;
 
-        public async Task<IActionResult> Index(string nombre, int? idMarca, int? idCategoria)
+        public async Task<IActionResult> Index(string nombre, int? idMarca, int? idCategoria, int pagina = 1)
         {
             await CargarCombos();
 
@@ -46,11 +47,23 @@ namespace WebFront.Controllers
                 lista = lista.Where(p => p.IdCategoria == idCategoria.Value).ToList();
             }
 
+            int totalRegistros = lista.Count;
+            int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)PageSize);
+
+            var registrosPaginados = lista
+                .Skip((pagina - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
             ViewBag.NombreActual = nombre;
             ViewBag.MarcaActual = idMarca;
             ViewBag.CategoriaActual = idCategoria;
 
-            return View(lista);
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
+
+            return View(registrosPaginados);
         }
 
         

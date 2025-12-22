@@ -15,8 +15,10 @@ namespace WebFront.Controllers
         private readonly string ApiServicio = "https://localhost:7236/api/Usuario/";
 
 
-        public async Task<IActionResult> ListarUsuarios(string nombre)
+        public async Task<IActionResult> ListarUsuarios(string nombre, int pagina = 1)
         {
+            int PageSize = 10;
+
             var canal = GrpcChannel.ForAddress(grpcServicio);
             _client = new ServicioUsuarios.ServicioUsuariosClient(canal);
 
@@ -43,7 +45,19 @@ namespace WebFront.Controllers
 
             }
 
-            return View(temporal);
+            int totalRegistros = temporal.Count;
+            int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)PageSize);
+
+            var registrosPaginados = temporal
+                .Skip((pagina - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
+
+            return View(registrosPaginados);
         }
 
 

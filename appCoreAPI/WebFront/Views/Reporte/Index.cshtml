@@ -2,8 +2,11 @@
 
 @{
     ViewData["Title"] = "Reporte de Ventas";
-    // Recuperamos el tipo de filtro para mantener la selección al recargar
+
     string filtroActual = ViewBag.TipoFiltro as string ?? "todos";
+    int paginaActual = ViewBag.PaginaActual ?? 1;
+    int totalPaginas = ViewBag.TotalPaginas ?? 1;
+    int totalRegistros = ViewBag.TotalRegistros ?? 0;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -24,6 +27,7 @@
         </div>
     </div>
 </div>
+
 <div class="card shadow-sm border-0 mb-4 bg-light">
     <div class="card-body py-3">
         <form asp-action="Filtrar" method="get" id="formReportes">
@@ -55,7 +59,7 @@
                 </div>
 
                 <div class="col-md-4 filtro-section" id="filtro-producto" style="display:none;">
-                    <input type="text" name="nombreProducto" class="form-control" placeholder="Escribe el nombre..." value="@ViewBag.NombreProducto" />
+                    <input type="text" name="nombreProducto" class="form-control" placeholder="Escriba el nombre del producto..." value="@ViewBag.NombreProducto" />
                 </div>
 
                 <div class="col-md-2">
@@ -128,7 +132,76 @@
             </table>
         </div>
     </div>
+
+    @* SECCIÓN DE PAGINACIÓN *@
+    @if (totalPaginas > 1)
+    {
+        <div class="card-footer bg-light border-top">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div class="text-muted small">
+                    Mostrando @((paginaActual - 1) * 10 + 1) - @Math.Min(paginaActual * 10, totalRegistros) de @totalRegistros registros
+                </div>
+                
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        @* Botón Anterior *@
+                        @if (paginaActual > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@GenerarUrlPaginacion(paginaActual - 1)">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @* Números de página *@
+                        @for (int i = Math.Max(1, paginaActual - 2); i <= Math.Min(totalPaginas, paginaActual + 2); i++)
+                        {
+                            <li class="page-item @(i == paginaActual ? "active" : "")">
+                                <a class="page-link" href="@GenerarUrlPaginacion(i)">@i</a>
+                            </li>
+                        }
+
+                        @* Botón Siguiente *@
+                        @if (paginaActual < totalPaginas)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@GenerarUrlPaginacion(paginaActual + 1)">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
 </div>
+
+@* FUNCIÓN PARA GENERAR URLs DE PAGINACIÓN *@
+@functions {
+    string GenerarUrlPaginacion(int pagina)
+    {
+        string tipoFiltro = ViewBag.TipoFiltro as string;
+
+        if (string.IsNullOrEmpty(tipoFiltro) || tipoFiltro == "todos")
+        {
+            return Url.Action("Index", new { pagina });
+        }
+        else
+        {
+            return Url.Action("Filtrar", new
+            {
+                tipoFiltro = ViewBag.TipoFiltro,
+                fechaInicio = ViewBag.FechaInicio,
+                fechaFin = ViewBag.FechaFin,
+                idUsuario = ViewBag.IdUsuario,
+                nombreProducto = ViewBag.NombreProducto,
+                pagina
+            });
+        }
+    }
+}
 
 @section Scripts {
     <script>
