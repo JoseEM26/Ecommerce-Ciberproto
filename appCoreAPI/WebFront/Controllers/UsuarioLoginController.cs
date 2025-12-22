@@ -93,7 +93,13 @@ namespace WebFront.Controllers
         public async Task<IActionResult> EditarPerfil()
         {
             int? userId = HttpContext.Session.GetInt32("UsuarioID");
-            if (userId == null) return RedirectToAction("Login");
+            string rol = HttpContext.Session.GetString("UsuarioRol");
+
+            if (userId == null)
+            {
+                if (rol == "ADMIN") return RedirectToAction("Login");
+                return RedirectToAction("LoginCliente");
+            }
 
             UsuarioModel usuario = new UsuarioModel();
             using (var client = new HttpClient())
@@ -106,18 +112,21 @@ namespace WebFront.Controllers
                     usuario = JsonConvert.DeserializeObject<UsuarioModel>(json);
                 }
             }
+            ViewBag.Rol = rol;
             return View(usuario);
         }
 
-        // POST: UsuarioLogin/EditarPerfil
+        
         [HttpPost]
         public async Task<IActionResult> EditarPerfil(UsuarioModel reg)
         {
+            string rolActual = HttpContext.Session.GetString("UsuarioRol");
+
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiServicio);
 
-                // Enviamos el objeto a la misma API de actualizar
+                
                 StringContent content = new StringContent(JsonConvert.SerializeObject(reg),
                                         Encoding.UTF8, "application/json");
 
@@ -137,6 +146,7 @@ namespace WebFront.Controllers
                 }
 
                 ViewBag.mensaje = "No se pudieron guardar los cambios.";
+                ViewBag.Rol = rolActual;
                 return View(reg);
             }
         }
