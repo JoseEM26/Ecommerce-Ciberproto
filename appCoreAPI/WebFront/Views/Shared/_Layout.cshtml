@@ -41,6 +41,7 @@
             margin-right: 10px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -175,3 +176,18 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var message = '@TempData["SweetAlert"]';
+        if (message) {
+            var data = JSON.parse(message.replace(/&quot;/g, '"'));
+            Swal.fire({
+                icon: data.icon,
+                title: data.title,
+                text: data.text,
+                confirmButtonColor: '#3085d6'
+            });
+        }
+    });
+</script>

@@ -69,7 +69,6 @@ namespace WebFront.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(UsuarioModel reg)
         {
-            string mensaje = "";
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiServicio);
@@ -78,11 +77,24 @@ namespace WebFront.Controllers
 
                 HttpResponseMessage response = await client.PostAsync("registrarUsuario", content);
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                mensaje = apiResponse;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlert"] = JsonConvert.SerializeObject(new
+                    {
+                        icon = "success",
+                        title = "¡Usuario Creado!",
+                        text = "El usuario se registró correctamente."
+                    });
+                    return RedirectToAction("ListarUsuarios");
+                }
+                else
+                {
+                    ViewBag.mensaje = "Error: " + apiResponse;
+                    return View(reg);
+                }
 
             }
-            ViewBag.mensaje = mensaje;
-            return View(await Task.Run(() => reg));
         }
 
 
@@ -105,7 +117,6 @@ namespace WebFront.Controllers
         [HttpPost]
         public async Task<ActionResult> Edit(UsuarioModel reg)
         {
-            string mensaje = "";
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri(ApiServicio);
@@ -113,12 +124,24 @@ namespace WebFront.Controllers
                             Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = await client.PutAsync("actualizarUsuario", content);
-                string apiResponse = await response.Content.ReadAsStringAsync();
-                mensaje = apiResponse;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlert"] = JsonConvert.SerializeObject(new
+                    {
+                        icon = "success",
+                        title = "Perfil Actualizado",
+                        text = "Los datos se guardaron correctamente."
+                    });
+                    return RedirectToAction("ListarUsuarios");
+                }
+                else
+                {
+                    ViewBag.mensaje = "Error al actualizar.";
+                    return View(reg);
+                }
 
             }
-            ViewBag.mensaje = mensaje;
-            return View(await Task.Run(() => reg));
         }
 
 
@@ -154,5 +177,16 @@ namespace WebFront.Controllers
             }
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            using (var api = new HttpClient())
+            {
+                api.BaseAddress = new Uri(ApiServicio);
+                var response = await api.DeleteAsync($"EliminarUsuario/{id}");
+
+
+            }
+            return RedirectToAction("ListarUsuarios");
+        }
     }
 }
