@@ -71,7 +71,7 @@ namespace WebFront.Controllers
             if (idUsuario == null)
             {
                 Console.WriteLine("ERROR: Usuario no logueado");
-                return RedirectToAction("Login", "Usuario");
+                return RedirectToAction("LoginCliente", "UsuarioLogin");
             }
 
             try
@@ -164,7 +164,12 @@ namespace WebFront.Controllers
 
         public async Task<IActionResult> ActualizarCantidad(int idProducto, int cambio, string? returnUrl = null)
         {
+            Console.WriteLine($"=== ACTUALIZAR CANTIDAD ===");
+            Console.WriteLine($"IdProducto: {idProducto}, Cambio: {cambio}");
+
             var idUsuario = HttpContext.Session.GetInt32("UsuarioID");
+            Console.WriteLine($"IdUsuario: {idUsuario}");
+
             if (idUsuario == null)
             {
                 return RedirectToAction("Login", "Usuario");
@@ -175,11 +180,17 @@ namespace WebFront.Controllers
                 var client = _httpClientFactory.CreateClient("ApiClient");
 
                 // Obtener el item del carrito
-                var response = await client.GetAsync($"api/Carrito/ObtenerPorUsuarioProducto?idUsuario={idUsuario}&idProducto={idProducto}");
+                var url = $"api/Carrito/ObtenerPorUsuarioProducto?idUsuario={idUsuario}&idProducto={idProducto}";
+                Console.WriteLine($"URL GET: {url}");
+
+                var response = await client.GetAsync(url);
+                Console.WriteLine($"Response Status: {response.StatusCode}");
 
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Content: {content}");
+
                     var options = new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true,
@@ -189,27 +200,28 @@ namespace WebFront.Controllers
 
                     if (item != null)
                     {
+                        Console.WriteLine($"Item.Cantidad actual: {item.Cantidad}");
                         int nuevaCantidad = item.Cantidad + cambio;
+                        Console.WriteLine($"Nueva cantidad: {nuevaCantidad}");
 
                         // Si la cantidad llega a 0 o menos, eliminar
                         if (nuevaCantidad <= 0)
                         {
+                            Console.WriteLine("Eliminando...");
                             await client.DeleteAsync($"api/Carrito/EliminarPorUsuarioProducto?idUsuario={idUsuario}&idProducto={idProducto}");
                         }
                         else
                         {
-                            // No exceder el stock
-                            if (nuevaCantidad > item.Stock)
-                            {
-                                nuevaCantidad = item.Stock ?? 0;
-                            }
+                            var updateUrl = $"api/Carrito/ActualizarCantidad?idCarrito={item.IdCarrito}&cantidad={nuevaCantidad}";
+                            Console.WriteLine($"URL PUT: {updateUrl}");
 
-                            // Actualizar usando el endpoint correcto
-                            var updateResponse = await client.PutAsync($"api/Carrito/ActualizarCantidad?idCarrito={item.IdCarrito}&cantidad={nuevaCantidad}", null);
+                            var updateResponse = await client.PutAsync(updateUrl, null);
+                            Console.WriteLine($"Update Status: {updateResponse.StatusCode}");
 
                             if (!updateResponse.IsSuccessStatusCode)
                             {
-                                Console.WriteLine($"Error al actualizar: {updateResponse.StatusCode}");
+                                var error = await updateResponse.Content.ReadAsStringAsync();
+                                Console.WriteLine($"Error: {error}");
                             }
                         }
 
@@ -220,14 +232,17 @@ namespace WebFront.Controllers
                             var countContent = await countResponse.Content.ReadAsStringAsync();
                             var cantidad = JsonSerializer.Deserialize<int>(countContent);
                             HttpContext.Session.SetInt32("CarritoCantidad", cantidad);
+                            Console.WriteLine($"Contador actualizado: {cantidad}");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error en ActualizarCantidad: {ex.Message}");
+                Console.WriteLine($"EXCEPTION: {ex.Message}");
             }
+
+            Console.WriteLine($"=== FIN ===");
 
             // Redirigir a donde vino
             if (!string.IsNullOrEmpty(returnUrl))
