@@ -9,8 +9,8 @@ namespace WebFront.Controllers
     public class ReporteController : Controller
     {
         private readonly string grpcUrl = "https://localhost:7247";
-
-        public async Task<IActionResult> Index()
+        private int PageSize = 10;
+        public async Task<IActionResult> Index(int pagina = 1)
         {
             await CargarComboClientes();
 
@@ -47,12 +47,24 @@ namespace WebFront.Controllers
                 ViewBag.Error = "Error inicial: " + ex.Message;
             }
 
-            return View(listaReporte); 
+            int totalRegistros = listaReporte.Count;
+            int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)PageSize);
+
+            var registrosPaginados = listaReporte
+                .Skip((pagina - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
+
+            return View(registrosPaginados);
         }
 
 
         [HttpGet] 
-        public async Task<IActionResult> Filtrar(string tipoFiltro, string fechaInicio, string fechaFin, int? idUsuario, string nombreProducto)
+        public async Task<IActionResult> Filtrar(string tipoFiltro, string fechaInicio, string fechaFin, int? idUsuario, string nombreProducto, int pagina = 1)
         {
             var canal = GrpcChannel.ForAddress(grpcUrl);
             var client = new ServicioVentas.ServicioVentasClient(canal);
@@ -120,6 +132,14 @@ namespace WebFront.Controllers
                 }
             }
 
+            int totalRegistros = listaReporte.Count;
+            int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)PageSize);
+
+            var registrosPaginados = listaReporte
+                .Skip((pagina - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
             await CargarComboClientes(); 
 
             ViewBag.TipoFiltro = tipoFiltro;
@@ -127,8 +147,11 @@ namespace WebFront.Controllers
             ViewBag.FechaFin = fechaFin;
             ViewBag.IdUsuario = idUsuario;
             ViewBag.NombreProducto = nombreProducto;
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
 
-            return View("Index", listaReporte);
+            return View("Index", registrosPaginados);
         }
 
         private async Task CargarComboClientes()
@@ -157,7 +180,7 @@ namespace WebFront.Controllers
             }
         }
 
-        public async Task<IActionResult> Inventario(string busqueda)
+        public async Task<IActionResult> Inventario(string busqueda, int pagina = 1)
         {
             var canal = GrpcChannel.ForAddress(grpcUrl);
             var client = new ServicioProductos.ServicioProductosClient(canal);
@@ -190,7 +213,20 @@ namespace WebFront.Controllers
                 ViewBag.Busqueda = busqueda;
             }
 
-            return View(lista);
+            int totalRegistros = lista.Count;
+            int totalPaginas = (int)Math.Ceiling(totalRegistros / (double)PageSize);
+
+            var registrosPaginados = lista
+                .Skip((pagina - 1) * PageSize)
+                .Take(PageSize)
+                .ToList();
+
+            ViewBag.PaginaActual = pagina;
+            ViewBag.TotalPaginas = totalPaginas;
+            ViewBag.TotalRegistros = totalRegistros;
+            ViewBag.TotalStock = lista.Sum(x => x.Stock);
+
+            return View(registrosPaginados);
         }
 
 
