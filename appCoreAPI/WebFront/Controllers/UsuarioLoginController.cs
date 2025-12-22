@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Text;
 using WebFront.Models;
 
 namespace WebFront.Controllers
@@ -87,6 +88,57 @@ namespace WebFront.Controllers
             }
 
             return View(usuario);
+        }
+
+        public async Task<IActionResult> EditarPerfil()
+        {
+            int? userId = HttpContext.Session.GetInt32("UsuarioID");
+            if (userId == null) return RedirectToAction("Login");
+
+            UsuarioModel usuario = new UsuarioModel();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ApiServicio);
+                HttpResponseMessage response = await client.GetAsync("getUsuarioById/" + userId);
+                if (response.IsSuccessStatusCode)
+                {
+                    string json = await response.Content.ReadAsStringAsync();
+                    usuario = JsonConvert.DeserializeObject<UsuarioModel>(json);
+                }
+            }
+            return View(usuario);
+        }
+
+        // POST: UsuarioLogin/EditarPerfil
+        [HttpPost]
+        public async Task<IActionResult> EditarPerfil(UsuarioModel reg)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ApiServicio);
+
+                // Enviamos el objeto a la misma API de actualizar
+                StringContent content = new StringContent(JsonConvert.SerializeObject(reg),
+                                        Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PutAsync("actualizarUsuario", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["SweetAlert"] = JsonConvert.SerializeObject(new
+                    {
+                        icon = "success",
+                        title = "¡Perfil Actualizado!",
+                        text = "Tus datos se han guardado correctamente."
+                    });
+
+                    HttpContext.Session.SetString("UsuarioNombre", reg.Nombres + " " + reg.Apellidos);
+                    return RedirectToAction("Perfil");
+                }
+
+                ViewBag.mensaje = "No se pudieron guardar los cambios.";
+                return View(reg);
+            }
         }
 
         public IActionResult Logout()

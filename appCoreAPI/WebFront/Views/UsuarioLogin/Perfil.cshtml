@@ -1,6 +1,8 @@
 ﻿@model WebFront.Models.UsuarioModel
 @{
     ViewData["Title"] = "Mi Perfil";
+    var rol = Context.Session.GetString("UsuarioRol");
+    Layout = rol == "ADMIN" ? "_Layout" : "_LayoutCliente";
 }
 
 <div class="container py-5">
@@ -75,9 +77,18 @@
 
                 <div class="card-footer bg-light border-0 py-4 text-center">
                     <div class="d-grid gap-2 col-8 mx-auto">
-                        <a asp-controller="Home" asp-action="Index" class="btn btn-primary rounded-pill shadow-sm">
-                            <i class="bi bi-house-door me-2"></i>Volver al Inicio
+                        <a asp-controller="UsuarioLogin" asp-action="EditarPerfil" asp-route-id="@Model.IdUsuario" class="btn btn-outline-primary rounded-pill shadow-sm mb-2">
+                            <i class="bi bi-pencil-square me-2"></i>Editar mi Perfil
                         </a>
+
+                        @if (rol == "ADMIN")
+                        {
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Volver al Dashboard</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Tienda" asp-action="Index" class="btn btn-primary">Volver a la Tienda</a>
+                        }
                     </div>
                 </div>
             </div>
@@ -88,3 +99,24 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var dataRaw = '@TempData["SweetAlert"]';
+            if (dataRaw) {
+                var data = JSON.parse(dataRaw.replace(/&quot;/g, '"'));
+                Swal.fire({
+                    icon: data.icon,
+                    title: data.title,
+                    text: data.text,
+                    timer: 2500,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            }
+        });
+    </script>
+}

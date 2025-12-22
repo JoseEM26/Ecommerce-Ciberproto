@@ -1,0 +1,52 @@
+﻿@model WebFront.Models.UsuarioModel
+@{
+    ViewData["Title"] = "Editar Mi Perfil";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-header bg-primary text-white py-4 text-center"
+                     style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Mis Datos</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="EditarPerfil" method="post">
+                        @* Campos Ocultos Críticos *@
+                        <input type="hidden" asp-for="IdUsuario" />
+                        <input type="hidden" asp-for="Rol" />
+                        <input type="hidden" asp-for="Activo" />
+                        <input type="hidden" asp-for="FechaRegistro" />
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">NOMBRES</label>
+                                <input asp-for="Nombres" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted">APELLIDOS</label>
+                                <input asp-for="Apellidos" class="form-control" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted">CORREO ELECTRÓNICO</label>
+                                <input asp-for="Correo" class="form-control" type="email" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted">TELÉFONO</label>
+                                <input asp-for="Telefono" class="form-control" placeholder="Ej: +51 999 888 777" />
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill">
+                                <i class="bi bi-save me-2"></i>Guardar Cambios
+                            </button>
+                            <a asp-action="Perfil" class="btn btn-light rounded-pill">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
