@@ -31,10 +31,10 @@ namespace GrpcService1.Services
                     {
                         IdVenta = dr.GetInt32(0),
                         IdUsuario = dr.GetInt32(1),
-                        IdTarjeta = dr.GetInt32(2),
+                        IdTarjeta = dr.IsDBNull(2) ? 0 : dr.GetInt32(2),
                         TotalProductos = dr.GetInt32(3),
                         MontoTotal = dr.GetString(4),
-                        Contacto = dr.GetString(5),
+                        Contacto = dr.IsDBNull(5) ? "" : dr.GetString(5),
                         Telefono = dr.GetString(6),
                         Direccion = dr.GetString(7),
                         IdTransaccion = dr.GetString(8),

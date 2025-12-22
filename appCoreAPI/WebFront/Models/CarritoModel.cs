@@ -24,7 +24,7 @@ namespace WebFront.Models
         public string? ImagenProducto { get; set; }
         public string? NombreMarca { get; set; }
         public string? NombreCategoria { get; set; }
-        public bool ActivoProducto { get; set; } = true;
+        public bool? ActivoProducto { get; set; } = true;
 
         // Propiedades calculadas
         public decimal Subtotal => PrecioProducto * Cantidad;

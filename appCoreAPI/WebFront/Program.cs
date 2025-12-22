@@ -3,6 +3,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHttpClient();
+
+
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    var apiUrl = builder.Configuration["ApiSettings:BaseUrl"];
+    client.BaseAddress = new Uri(apiUrl ?? "https://localhost:7236");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(30);

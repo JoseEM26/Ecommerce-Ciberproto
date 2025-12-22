@@ -15,7 +15,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse gamer",
                     Precio = 3500,
                     Stock = 5,
-                    UrlImagen = "/imgs/mouse1.jpg"
+                    UrlImagen = "/img/mouse1.jpg"
                 },
                 new ProductoModel
                 {
@@ -23,7 +23,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse2.jpg"
+                    UrlImagen = "/img/mouse2.jpg"
                 },
                 new ProductoModel
                 {
@@ -31,7 +31,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse3.jpg"
+                    UrlImagen = "/img/mouse3.jpg"
                 },
                 new ProductoModel
                 {
@@ -39,7 +39,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse4.jpg"
+                    UrlImagen = "/img/mouse4.jpg"
                 },
                 new ProductoModel
                 {
@@ -47,7 +47,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse5.jpg"
+                    UrlImagen = "/img/mouse5.jpg"
                 },
                 new ProductoModel
                 {
@@ -55,7 +55,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse6.jpg"
+                    UrlImagen = "/img/mouse6.jpg"
                 },
                 new ProductoModel
                 {
@@ -63,7 +63,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse7.jpg"
+                    UrlImagen = "/img/mouse7.jpg"
                 },
                 new ProductoModel
                 {
@@ -71,7 +71,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse8.jpg"
+                    UrlImagen = "/img/mouse8.jpg"
                 },
                 new ProductoModel
                 {
@@ -79,7 +79,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse9.jpg"
+                    UrlImagen = "/img/mouse9.jpg"
                 },
                 new ProductoModel
                 {
@@ -87,7 +87,7 @@ namespace WebFront.Controllers
                     Nombre = "Mouse Gamer",
                     Precio = 150,
                     Stock = 20,
-                    UrlImagen = "/imgs/mouse10.jpg"
+                    UrlImagen = "/img/mouse10.jpg"
                 },
             };
 

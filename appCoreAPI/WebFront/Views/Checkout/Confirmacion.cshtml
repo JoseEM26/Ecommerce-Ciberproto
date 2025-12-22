@@ -1,0 +1,138 @@
+﻿@{
+    Layout = "_LayoutCliente";
+    ViewData["Title"] = "Compra Exitosa";
+}
+
+<style>
+    .confirmation-container {
+        max-width: 700px;
+        margin: 80px auto;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .success-icon {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        color: white;
+        margin-bottom: 30px;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    @@keyframes scaleIn {
+        from {
+            transform: scale(0);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .confirmation-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,.1);
+    }
+
+    .order-number {
+        font-size: 2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 20px 0;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,.4);
+            color: white;
+        }
+</style>
+
+<div class="confirmation-container">
+    <div class="success-icon">
+        <i class="bi bi-check-lg"></i>
+    </div>
+
+    <div class="confirmation-card">
+        <h1 class="fw-bold mb-3">¡Compra Exitosa!</h1>
+        <p class="text-muted lead">
+            Tu pedido ha sido procesado correctamente
+        </p>
+
+        <div class="order-number">
+            #@TempData["IdVenta"]
+        </div>
+
+        <div class="my-4">
+            <div class="info-row">
+                <span class="text-muted">Número de Orden:</span>
+                <strong>#@TempData["IdVenta"]</strong>
+            </div>
+            <div class="info-row">
+                <span class="text-muted">ID de Transacción:</span>
+                <strong>@TempData["IdTransaccion"]</strong>
+            </div>
+            <div class="info-row">
+                <span class="text-muted">Total de Productos:</span>
+                <strong>@TempData["TotalProductos"]</strong>
+            </div>
+            <div class="info-row">
+                <span class="text-muted">Monto Total:</span>
+                <strong class="text-success">S/ @TempData["MontoTotal"]</strong>
+            </div>
+        </div>
+
+        <div class="alert alert-info text-start">
+            <i class="bi bi-info-circle-fill"></i>
+            <strong>Información Importante:</strong>
+            <ul class="mb-0 mt-2">
+                <li>Recibirás un email de confirmación en breve</li>
+                <li>Tu pedido será procesado en las próximas 24 horas</li>
+                <li>El tiempo de entrega es de 3-5 días hábiles</li>
+            </ul>
+        </div>
+
+        <div class="mt-4">
+            <a asp-controller="Tienda" asp-action="Index" class="btn btn-primary-custom me-2">
+                <i class="bi bi-house-door"></i> Ir al Inicio
+            </a>
+            <a asp-controller="Catalogo" asp-action="Index" class="btn btn-outline-secondary">
+                <i class="bi bi-bag"></i> Seguir Comprando
+            </a>
+        </div>
+
+        <p class="text-muted mt-4 small">
+            ¿Tienes alguna pregunta?
+            <a asp-controller="Institucional" asp-action="Contacto">Contáctanos</a>
+        </p>
+    </div>
+</div>

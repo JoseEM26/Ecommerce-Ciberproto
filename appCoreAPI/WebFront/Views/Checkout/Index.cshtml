@@ -1,115 +1,236 @@
-﻿@model List<WebFront.Models.CarritoModel>
-
+﻿@model CheckoutModel
 @{
     Layout = "_LayoutCliente";
-    ViewData["Title"] = "Confirmar Compra";
-    var total = Model.Sum(x => x.Subtotal);
+    ViewData["Title"] = "Finalizar Compra";
 }
 
 <style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+
     .checkout-card {
-        border-radius: 18px;
-        box-shadow: 0 12px 30px rgba(0,0,0,.1);
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.1);
+        margin-bottom: 30px;
     }
 
-    .checkout-header {
+    .checkout-title {
+        font-weight: 800;
+        margin-bottom: 30px;
         background: linear-gradient(135deg, #667eea, #764ba2);
-        color: #fff;
-        border-radius: 18px 18px 0 0;
-        padding: 1.5rem;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
 
-    .checkout-product {
-        border-bottom: 1px solid #eee;
-        padding: 1rem 0;
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
     }
 
-        .checkout-product:last-child {
-            border-bottom: none;
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+    }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102,126,234,.25);
         }
 
-    .checkout-total {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: #5a67d8;
+    .order-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-bottom: 15px;
     }
 
-    .secure-box {
-        background: #f8f9fa;
-        border-radius: 14px;
-        padding: 1rem;
-        font-size: .9rem;
+    .order-item-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-right: 15px;
+    }
+
+    .order-summary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+    }
+
+    .btn-finalizar {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        width: 100%;
+        transition: 0.3s;
+    }
+
+        .btn-finalizar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,.4);
+            color: white;
+        }
+
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px;
+    }
+
+    .step {
+        flex: 1;
+        text-align: center;
+        position: relative;
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .step.inactive .step-number {
+        background: #e9ecef;
+        color: #adb5bd;
     }
 </style>
 
-<div class="container py-5">
+<div class="checkout-container">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
 
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+        <div class="step inactive">
+            <div class="step-number">1</div>
+            <p class="mb-0">Carrito</p>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <p class="mb-0">Datos de Envío</p>
+        </div>
+        <div class="step inactive">
+            <div class="step-number">3</div>
+            <p class="mb-0">Confirmación</p>
+        </div>
+    </div>
 
-            <div class="card checkout-card">
+    <form asp-action="ProcesarPago" method="post">
+        <div class="row">
+            <!-- Columna Izquierda: Formulario -->
+            <div class="col-lg-7">
+                <div class="checkout-card">
+                    <h2 class="checkout-title">
+                        <i class="bi bi-truck"></i> Datos de Envío
+                    </h2>
 
-                <!-- HEADER -->
-                <div class="checkout-header">
-                    <h3 class="mb-1">
-                        <i class="bi bi-shield-lock me-2"></i>
-                        Confirmar Compra
-                    </h3>
-                    <small>Revisa tu pedido antes de finalizar</small>
+                    <div class="mb-3">
+                        <label asp-for="Contacto" class="form-label">Nombre Completo *</label>
+                        <input asp-for="Contacto" class="form-control" placeholder="Ej: Juan Pérez García">
+                        <span asp-validation-for="Contacto" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Telefono" class="form-label">Teléfono *</label>
+                            <input asp-for="Telefono" class="form-control" placeholder="+51 999 999 999">
+                            <span asp-validation-for="Telefono" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Direccion" class="form-label">Dirección de Entrega *</label>
+                        <textarea asp-for="Direccion" class="form-control" rows="3"
+                                  placeholder="Av. Principal 123, San Isidro, Lima"></textarea>
+                        <span asp-validation-for="Direccion" class="text-danger small"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Nota:</strong> Tu pedido será entregado en 3-5 días hábiles
+                    </div>
                 </div>
+            </div>
 
-                <!-- BODY -->
-                <div class="card-body">
+            <!-- Columna Derecha: Resumen -->
+            <div class="col-lg-5">
+                <div class="checkout-card">
+                    <h3 class="checkout-title">
+                        <i class="bi bi-cart-check"></i> Resumen del Pedido
+                    </h3>
 
-                    <!-- PRODUCTOS -->
-                    @foreach (var item in Model)
+                    <!-- Items -->
+                    @foreach (var item in Model.ItemsCarrito)
                     {
-                        <div class="checkout-product d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>@item.NombreProducto</strong><br />
-                                <small class="text-muted">
-                                    Cantidad: @item.Cantidad
-                                </small>
+                        <div class="order-item">
+                            <img src="@item.ImagenUrl" class="order-item-img" alt="@item.NombreProducto">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-bold">@item.NombreProducto</h6>
+                                <p class="text-muted small mb-0">
+                                    Cantidad: @item.Cantidad × S/ @item.PrecioProducto
+                                </p>
                             </div>
-
-                            <div class="fw-bold">
-                                S/ @item.Subtotal
+                            <div class="text-end">
+                                <strong>S/ @item.Subtotal</strong>
                             </div>
                         </div>
                     }
 
-                    <!-- TOTAL -->
-                    <div class="d-flex justify-content-between align-items-center mt-4">
-                        <h5 class="mb-0">Total a pagar</h5>
-                        <div class="checkout-total">
-                            S/ @total
+                    <!-- Total -->
+                    <div class="order-summary mt-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <strong>S/ @Model.TotalCompra</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Envío:</span>
+                            <strong>GRATIS</strong>
+                        </div>
+                        <hr style="border-color: rgba(255,255,255,0.3);">
+                        <div class="d-flex justify-content-between">
+                            <h4 class="mb-0">Total:</h4>
+                            <h4 class="mb-0">S/ @Model.TotalCompra</h4>
                         </div>
                     </div>
 
-                    <!-- SEGURIDAD -->
-                    <div class="secure-box mt-4">
-                        <i class="bi bi-lock-fill me-2"></i>
-                        Pago seguro. Tus datos están protegidos.
-                    </div>
+                    <!-- Botón Finalizar -->
+                    <button type="submit" class="btn-finalizar mt-4">
+                        <i class="bi bi-check-circle"></i> Finalizar Compra
+                    </button>
 
-                    <!-- ACCIONES -->
-                    <form asp-action="Confirmar" method="post" class="mt-4">
-                        <button class="btn btn-success btn-lg w-100 fw-bold">
-                            <i class="bi bi-bag-check me-2"></i>
-                            Confirmar Compra
-                        </button>
-                    </form>
-
-                    <a asp-controller="Carrito"
-                       asp-action="Index"
-                       class="btn btn-link w-100 mt-3">
-                        ← Volver al carrito
+                    <a asp-controller="Carrito" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-arrow-left"></i> Volver al Carrito
                     </a>
-
                 </div>
             </div>
-
         </div>
-    </div>
-
+    </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
